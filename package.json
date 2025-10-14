@@ -13,7 +13,9 @@
     "db:generate": "prisma generate",
     "db:reset": "prisma migrate reset",
     "db:format": "prisma format",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "trigger:dev": "trigger dev",
+    "trigger:deploy": "trigger deploy"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
