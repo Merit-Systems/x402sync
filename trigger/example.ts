@@ -1,4 +1,4 @@
-import { createManyTransferEvents } from "@/db/services";
+import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules, wait } from "@trigger.dev/sdk/v3";
 import { BITQUERY_API_URL, FACILITATORS } from "./constants";
 
@@ -13,11 +13,20 @@ export const syncNewTransfers = schedules.task({
     // And calculate the time since the last run
 
     try {
-      // Calculate time range - get transfers from last run or last 5 minutes
       const now = new Date();
-      const since = payload.lastTimestamp 
-        ? new Date(payload.lastTimestamp) 
+      
+      // Get the most recent transfer from the database
+      const mostRecentTransfer = await getTransferEvents({
+        orderBy: { block_timestamp: 'desc' },
+        take: 1
+      });
+
+      // Use the most recent transfer's timestamp, or fall back to 6 months ago
+      const since = mostRecentTransfer.length > 0 
+        ? mostRecentTransfer[0].block_timestamp 
         : new Date(now.getTime() - 6 * 30 * 24 * 60 * 60 * 1000); // 6 months ago
+
+      logger.log(`Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
 
       // Fetch transfers from Bitquery
       const myHeaders = new Headers();
