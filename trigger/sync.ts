@@ -1,6 +1,6 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig } from "./types";
+import { ChainSyncConfig, PaginationStrategy } from "./types";
 import { PAGE_SIZE, TIME_WINDOW_DAYS } from "./constants";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
@@ -28,7 +28,13 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
         logger.log(`[${config.network}] Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-        const allTransfers = await fetchWithTimeWindowing(config, since, now);
+        let allTransfers;
+
+        if (config.paginationStrategy === PaginationStrategy.OFFSET) {
+          allTransfers = await fetchWithOffsetPagination(config, since, now);
+        } else {
+          allTransfers = await fetchWithTimeWindowing(config, since, now)
+        }
 
         logger.log(`[${config.network}] Found ${allTransfers.length} total transfers to sync from facilitators`);
 
@@ -43,6 +49,34 @@ export function createChainSyncTask(config: ChainSyncConfig) {
       }
     },
   });
+}
+
+async function fetchWithOffsetPagination(
+  config: ChainSyncConfig,
+  since: Date,
+  now: Date
+): Promise<any[]> {
+  const allTransfers = [];
+  let offset = 0;
+  let hasMore = true;
+  
+  while (hasMore) {
+    logger.log(`[${config.network}] Fetching with offset: ${offset}`);
+
+    const query = config.buildQuery(since, now, config.facilitators, PAGE_SIZE, offset);
+    const transfers = await executeBitqueryRequest(config, query)
+
+    allTransfers.push(...transfers);
+
+    if (transfers.length < PAGE_SIZE) {
+      hasMore = false;
+    } else {
+      offset += PAGE_SIZE;
+    }
+
+  }
+  
+  return allTransfers;
 }
 
 async function fetchWithTimeWindowing(

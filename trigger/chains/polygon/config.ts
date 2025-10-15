@@ -1,4 +1,4 @@
-import { ChainSyncConfig } from "../../types";
+import { ChainSyncConfig, PaginationStrategy } from "../../types";
 import { transformResponse } from "../base/config";
 
 function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
@@ -51,6 +51,7 @@ export const polygonChainConfig: ChainSyncConfig = {
   ],
   fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
   apiUrl: "https://streaming.bitquery.io/graphql",
+  paginationStrategy: PaginationStrategy.OFFSET,
   buildQuery,
   transformResponse,
 };

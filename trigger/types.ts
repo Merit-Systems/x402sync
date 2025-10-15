@@ -9,6 +9,11 @@ export interface TransferEventData {
   chain: string;
 }
 
+export enum PaginationStrategy {
+  TIME_WINDOW = 'time-window',
+  OFFSET = 'offset',
+}
+
 export interface ChainSyncConfig {
   cron: string;
   maxDuration: number;
@@ -17,7 +22,8 @@ export interface ChainSyncConfig {
   facilitators: string[];
   fallbackTime: number;
   apiUrl: string;
+  paginationStrategy: PaginationStrategy;
   
-  buildQuery: (since: Date, now: Date, facilitators: string[], limit: number) => string;
+  buildQuery: (since: Date, now: Date, facilitators: string[], limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }
