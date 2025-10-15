@@ -1,13 +1,14 @@
-import { ChainSyncConfig, TransferEventData } from "../types";
-import {
-  SOLANA_FACILITATORS,
-  SOLANA_NETWORK,
-  SOLANA_SYNC_FALLBACK_TIME,
-  SOLANA_SYNC_INTERVAL,
-  SOLANA_SYNC_MAX_DURATION,
-  SOLANA_SYNC_TASK_ID,
-  SOLANA_BITQUERY_API_URL,
-} from "../constants";
+import { ChainSyncConfig, TransferEventData } from "../../types";
+
+const SOLANA_BITQUERY_API_URL = "https://graphql.bitquery.io";
+const SOLANA_NETWORK = "solana";
+const SOLANA_FACILITATORS = [
+    "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
+];
+const SOLANA_SYNC_TASK_ID = "solana-sync-transfers";
+const SOLANA_SYNC_INTERVAL = "*/30 * * * *";
+const SOLANA_SYNC_MAX_DURATION = 300; // in seconds
+const SOLANA_SYNC_FALLBACK_TIME = 6 * 30 * 24 * 60 * 60 * 1000; // in milliseconds
 
 function buildQuery(since: Date, now: Date, facilitators: string[]): string {
   return `

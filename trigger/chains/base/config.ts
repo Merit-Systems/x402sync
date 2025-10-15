@@ -1,13 +1,14 @@
-import { ChainSyncConfig, TransferEventData } from "../types";
-import {
-  BASE_FACILITATORS,
-  BASE_NETWORK,
-  BASE_SYNC_FALLBACK_TIME,
-  BASE_SYNC_INTERVAL,
-  BASE_SYNC_MAX_DURATION,
-  BASE_SYNC_TASK_ID,
-  BASE_BITQUERY_API_URL,
-} from "../constants";
+import { ChainSyncConfig, TransferEventData } from "../../types";
+
+const BASE_BITQUERY_API_URL = "https://streaming.bitquery.io/graphql";
+const BASE_NETWORK = "base";
+const BASE_FACILITATORS = [
+    "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // Coinbase
+];
+const BASE_SYNC_TASK_ID = "base-sync-transfers";
+const BASE_SYNC_INTERVAL = "*/30 * * * *";
+const BASE_SYNC_MAX_DURATION = 1000; // in seconds
+const BASE_SYNC_FALLBACK_TIME = 6 * 30 * 24 * 60 * 60 * 1000; // in milliseconds
 
 function buildQuery(since: Date, now: Date, facilitators: string[]): string {
   return `
