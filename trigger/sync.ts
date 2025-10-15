@@ -54,6 +54,8 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
         const result = await response.json();
 
+        logger.log(`[${config.network}] Bitquery API response:`, { result });
+
         // Check for GraphQL errors
         if (result.errors) {
           logger.error(`[${config.network}] Bitquery GraphQL errors:`, { errors: result.errors });

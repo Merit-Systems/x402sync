@@ -15,7 +15,6 @@ function buildQuery(since: Date, now: Date, facilitators: string[]): string {
             }
           }
           orderBy: {descending: Block_Number}
-          limit: {count: 20000}
         ) {
           Transfer {
             Amount
@@ -28,8 +27,8 @@ function buildQuery(since: Date, now: Date, facilitators: string[]): string {
             }
           }
           Block {
-            Date
             Number
+            Time
           }
           Transaction {
             Hash
@@ -48,7 +47,7 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     sender: item.Transfer.Sender,
     recipient: item.Transfer.Receiver,
     amount: parseFloat(item.Transfer.Amount),
-    block_timestamp: new Date(item.Block.Date),
+    block_timestamp: new Date(item.Block.Time),
     tx_hash: item.Transaction.Hash,
     chain: network,
   }));

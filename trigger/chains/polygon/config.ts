@@ -28,7 +28,7 @@ function buildQuery(since: Date, now: Date, facilitators: string[]): string {
             }
           }
           Block {
-            Date
+            Time
             Number
           }
           Transaction {
@@ -48,7 +48,7 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     sender: item.Transfer.Sender,
     recipient: item.Transfer.Receiver,  
     amount: parseFloat(item.Transfer.Amount),
-    block_timestamp: new Date(item.Block.Date),
+    block_timestamp: new Date(item.Block.Time),
     tx_hash: item.Transaction.Hash,
     chain: network,
   }));
