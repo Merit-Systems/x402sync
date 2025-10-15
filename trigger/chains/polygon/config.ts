@@ -3,7 +3,7 @@ import { ChainSyncConfig, TransferEventData } from "../../types";
 function buildQuery(since: Date, now: Date, facilitators: string[]): string {
   return `
     {
-      EVM(network: base, dataset: combined) {
+      EVM(network: matic, dataset: combined) {
         Transfers(
           where: {
             Transaction: {
@@ -46,7 +46,7 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     address: item.Transfer.Currency?.SmartContract || "0x0000000000000000000000000000000000000000",
     transaction_from: item.Transaction.From,
     sender: item.Transfer.Sender,
-    recipient: item.Transfer.Receiver,
+    recipient: item.Transfer.Receiver,  
     amount: parseFloat(item.Transfer.Amount),
     block_timestamp: new Date(item.Block.Date),
     tx_hash: item.Transaction.Hash,
@@ -54,10 +54,10 @@ function transformResponse(data: any, network: string): TransferEventData[] {
   }));
 }
 
-export const baseChainConfig: ChainSyncConfig = {
+export const polygonChainConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
   maxDuration: 1000,
-  network: "base",
+  network: "polygon",
   facilitators: [
     "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // Coinbase
   ],

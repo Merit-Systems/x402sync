@@ -4,7 +4,7 @@ import { ChainSyncConfig } from "./types";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
-    id: config.taskId,
+    id: config.network + "-sync-transfers",
     cron: config.cron,
     maxDuration: config.maxDuration,
     run: async () => {
@@ -61,7 +61,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
         }
 
         // Transform the response using chain-specific transformer
-        const transfers = config.transformResponse(result.data);
+        const transfers = config.transformResponse(result.data, config.network);
 
         logger.log(`[${config.network}] Found ${transfers.length} transfers to sync from facilitators`);
 

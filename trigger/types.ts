@@ -10,7 +10,6 @@ export interface TransferEventData {
 }
 
 export interface ChainSyncConfig {
-  taskId: string;
   cron: string;
   maxDuration: number;
   
@@ -20,6 +19,6 @@ export interface ChainSyncConfig {
   apiUrl: string;
   
   buildQuery: (since: Date, now: Date, facilitators: string[]) => string;
-  transformResponse: (data: any) => TransferEventData[];
+  transformResponse: (data: any, network: string) => TransferEventData[];
 }
 
