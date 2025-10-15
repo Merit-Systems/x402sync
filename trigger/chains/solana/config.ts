@@ -49,7 +49,7 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     transaction_from: transfer.transaction.feePayer,
     sender: transfer.sender.address,
     recipient: transfer.receiver.address,
-    amount: parseFloat(transfer.amount),
+    amount: Math.round(parseFloat(transfer.amount) * 1_000_000),
     block_timestamp: new Date(transfer.block.timestamp.time),
     tx_hash: transfer.transaction.signature,
     chain: network,
