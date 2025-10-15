@@ -18,7 +18,6 @@ export interface ChainSyncConfig {
   fallbackTime: number;
   apiUrl: string;
   
-  buildQuery: (since: Date, now: Date, facilitators: string[]) => string;
+  buildQuery: (since: Date, now: Date, facilitators: string[], limit: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }
-

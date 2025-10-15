@@ -1,10 +1,11 @@
 import { ChainSyncConfig, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[]): string {
+function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
   return `
     {
       EVM(network: base, dataset: combined) {
         Transfers(
+          limit: {count: ${limit}}
           where: {
             Transaction: {
               From: {in: ${JSON.stringify(facilitators)}}

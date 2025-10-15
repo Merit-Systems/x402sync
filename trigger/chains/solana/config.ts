@@ -1,11 +1,11 @@
 import { ChainSyncConfig, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[]): string {
+function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
   return `
     {
       solana(network: solana) {
         sent: transfers(
-          options: {desc: "block.height", limit: 20000, offset: 0}
+          options: {desc: "block.height", limit: ${limit}, offset: 0}
           time: {
             since: "${since.toISOString()}"
             till: "${now.toISOString()}"
