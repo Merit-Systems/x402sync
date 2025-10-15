@@ -1,24 +1,27 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
-import { logger, schedules, wait } from "@trigger.dev/sdk/v3";
-import { BITQUERY_API_URL, FACILITATORS, SYNC_FALLBACK_TIME, SYNC_INTERVAL, SYNC_MAX_DURATION, SYNC_TASK_ID } from "./constants";
+import { logger, schedules } from "@trigger.dev/sdk/v3";
+import { SOLANA_BITQUERY_API_URL, SOLANA_FACILITATORS, SOLANA_NETWORK, SOLANA_SYNC_FALLBACK_TIME, SOLANA_SYNC_INTERVAL, SOLANA_SYNC_MAX_DURATION, SOLANA_SYNC_TASK_ID } from "./constants";
 
-export const syncTransfers = schedules.task({
-  id: SYNC_TASK_ID,
-  cron: SYNC_INTERVAL,
-  maxDuration: SYNC_MAX_DURATION,
+export const solanaSyncTransfers = schedules.task({
+  id: SOLANA_SYNC_TASK_ID,
+  cron: SOLANA_SYNC_INTERVAL,
+  maxDuration: SOLANA_SYNC_MAX_DURATION,
   run: async () => {
     try {
       const now = new Date();
       
       const mostRecentTransfer = await getTransferEvents({
         orderBy: { block_timestamp: 'desc' },
-        take: 1
+        take: 1,
+        where: {
+          chain: SOLANA_NETWORK
+        }
       });
 
       // Use the most recent transfer's timestamp, or use fallback time
       const since = mostRecentTransfer.length > 0 
         ? mostRecentTransfer[0].block_timestamp 
-        : new Date(now.getTime() - SYNC_FALLBACK_TIME);
+        : new Date(now.getTime() - SOLANA_SYNC_FALLBACK_TIME);
 
       logger.log(`Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
 
@@ -39,7 +42,7 @@ export const syncTransfers = schedules.task({
                 }
                 amount: {gt: 0}
                 signer: {
-                  in: ${JSON.stringify(FACILITATORS)}
+                  in: ${JSON.stringify(SOLANA_FACILITATORS)}
                 }
               ) {
                 block {
@@ -76,7 +79,7 @@ export const syncTransfers = schedules.task({
         body: rawQuery,
       };
 
-      const response = await fetch(BITQUERY_API_URL, requestOptions);
+      const response = await fetch(SOLANA_BITQUERY_API_URL, requestOptions);
 
       if (!response.ok) {
         const errorText = await response.text();
