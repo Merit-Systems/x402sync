@@ -1,6 +1,7 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig } from "./types";
+import { ChainSyncConfig, PaginationStrategy } from "./types";
+import { fetchWithOffsetPagination, fetchWithTimeWindowing } from "./fetch";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
@@ -11,7 +12,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
       try {
         const now = new Date();
         
-        // Get the most recent transfer for this chain from the database
+        // Get the most recent transfer for this chain
         const mostRecentTransfer = await getTransferEvents({
           orderBy: { block_timestamp: 'desc' },
           take: 1,
@@ -27,49 +28,18 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
         logger.log(`[${config.network}] Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-        // Build the GraphQL query using chain-specific builder
-        const query = config.buildQuery(since, now, config.facilitators);
+        let allTransfers;
 
-        // Prepare Bitquery API request
-        const headers = new Headers();
-        headers.append("Content-Type", "application/json");
-        headers.append("Authorization", `Bearer ${process.env.BITQUERY_API_KEY}`);
-
-        const rawQuery = JSON.stringify({ query });
-
-        const requestOptions = {
-          method: "POST",
-          headers: headers,
-          body: rawQuery,
-        };
-
-        // Fetch transfers from Bitquery
-        const response = await fetch(config.apiUrl, requestOptions);
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          logger.error(`[${config.network}] Bitquery API error (${response.status}):`, { error: errorText });
-          throw new Error(`Bitquery API returned ${response.status}: ${errorText}`);
+        if (config.paginationStrategy === PaginationStrategy.OFFSET) {
+          allTransfers = await fetchWithOffsetPagination(config, since, now);
+        } else {
+          allTransfers = await fetchWithTimeWindowing(config, since, now);
         }
 
-        const result = await response.json();
+        logger.log(`[${config.network}] Found ${allTransfers.length} total transfers to sync from facilitators`);
 
-        logger.log(`[${config.network}] Bitquery API response:`, { result });
-
-        // Check for GraphQL errors
-        if (result.errors) {
-          logger.error(`[${config.network}] Bitquery GraphQL errors:`, { errors: result.errors });
-          throw new Error(`Bitquery GraphQL errors: ${JSON.stringify(result.errors)}`);
-        }
-
-        // Transform the response using chain-specific transformer
-        const transfers = config.transformResponse(result.data, config.network);
-
-        logger.log(`[${config.network}] Found ${transfers.length} transfers to sync from facilitators`);
-
-        // Save new transfers to database
-        if (transfers.length > 0) {
-          const syncResult = await createManyTransferEvents(transfers);
+        if (allTransfers.length > 0) {
+          const syncResult = await createManyTransferEvents(allTransfers);
           logger.log(`[${config.network}] Successfully synced ${syncResult.count} new transfers`);
         }
 
@@ -80,3 +50,4 @@ export function createChainSyncTask(config: ChainSyncConfig) {
     },
   });
 }
+

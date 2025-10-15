@@ -1,11 +1,11 @@
-import { ChainSyncConfig, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[]): string {
+function buildQuery(since: Date, now: Date, facilitators: string[], limit: number, offset?: number): string {
   return `
     {
       solana(network: solana) {
         sent: transfers(
-          options: {desc: "block.height", limit: 20000, offset: 0}
+          options: {desc: "block.height", limit: ${limit}, offset: ${offset}}
           time: {
             since: "${since.toISOString()}"
             till: "${now.toISOString()}"
@@ -65,6 +65,7 @@ export const solanaChainConfig: ChainSyncConfig = {
   ],
   fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
   apiUrl: "https://graphql.bitquery.io",
+  paginationStrategy: PaginationStrategy.OFFSET,
   buildQuery,
   transformResponse,
 };

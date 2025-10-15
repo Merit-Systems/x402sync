@@ -1,11 +1,12 @@
-import { ChainSyncConfig } from "../../types";
+import { ChainSyncConfig, PaginationStrategy } from "../../types";
 import { transformResponse } from "../base/config";
 
-function buildQuery(since: Date, now: Date, facilitators: string[]): string {
+function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
   return `
     {
       EVM(network: matic, dataset: combined) {
         Transfers(
+          limit: {count: ${limit}}
           where: {
             Transaction: {
               From: {in: ${JSON.stringify(facilitators)}}
@@ -16,7 +17,6 @@ function buildQuery(since: Date, now: Date, facilitators: string[]): string {
             }
           }
           orderBy: {descending: Block_Number}
-          limit: {count: 20000}
         ) {
           Transfer {
             Amount
@@ -51,6 +51,7 @@ export const polygonChainConfig: ChainSyncConfig = {
   ],
   fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
   apiUrl: "https://streaming.bitquery.io/graphql",
+  paginationStrategy: PaginationStrategy.TIME_WINDOW,
   buildQuery,
   transformResponse,
 };

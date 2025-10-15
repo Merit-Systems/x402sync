@@ -1,10 +1,11 @@
-import { ChainSyncConfig, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[]): string {
+function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
   return `
     {
       EVM(network: base, dataset: combined) {
         Transfers(
+          limit: {count: ${limit}}
           where: {
             Transaction: {
               From: {in: ${JSON.stringify(facilitators)}}
@@ -65,6 +66,7 @@ export const baseChainConfig: ChainSyncConfig = {
   ],
   fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
   apiUrl: "https://streaming.bitquery.io/graphql",
+  paginationStrategy: PaginationStrategy.TIME_WINDOW,
   buildQuery,
   transformResponse,
 };
