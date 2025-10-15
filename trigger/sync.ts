@@ -1,9 +1,7 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
 import { ChainSyncConfig } from "./types";
-
-const PAGE_SIZE = 20000; 
-const TIME_WINDOW_DAYS = 10; 
+import { PAGE_SIZE, TIME_WINDOW_DAYS } from "./constants";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
@@ -14,7 +12,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
       try {
         const now = new Date();
         
-        // Get the most recent transfer for this chain from the database
+        // Get the most recent transfer for this chain
         const mostRecentTransfer = await getTransferEvents({
           orderBy: { block_timestamp: 'desc' },
           take: 1,
@@ -30,12 +28,10 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
         logger.log(`[${config.network}] Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-        // Fetch all transfers using time-based windowing
         const allTransfers = await fetchWithTimeWindowing(config, since, now);
 
         logger.log(`[${config.network}] Found ${allTransfers.length} total transfers to sync from facilitators`);
 
-        // Save new transfers to database
         if (allTransfers.length > 0) {
           const syncResult = await createManyTransferEvents(allTransfers);
           logger.log(`[${config.network}] Successfully synced ${syncResult.count} new transfers`);
@@ -56,7 +52,7 @@ async function fetchWithTimeWindowing(
 ): Promise<any[]> {
   const allTransfers = [];
   let currentStart = new Date(since);
-  const timeWindowMs = TIME_WINDOW_DAYS * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+  const timeWindowMs = TIME_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
   while (currentStart < now) {
     const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));
@@ -69,7 +65,7 @@ async function fetchWithTimeWindowing(
     allTransfers.push(...transfers);
     logger.log(`[${config.network}] Fetched ${transfers.length} transfers in this time window`);
 
-    // If we got the full PAGE_SIZE, this window might have more data
+    // If we got the full PAGE_SIZE, this window has more data
     if (transfers.length >= PAGE_SIZE) {
       logger.warn(`[${config.network}] Window returned ${transfers.length} transfers (at or above limit). Some data might be missing. Consider reducing TIME_WINDOW_DAYS.`);
     }
