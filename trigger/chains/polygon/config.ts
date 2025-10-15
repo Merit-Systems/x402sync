@@ -51,7 +51,7 @@ export const polygonChainConfig: ChainSyncConfig = {
   ],
   fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
   apiUrl: "https://streaming.bitquery.io/graphql",
-  paginationStrategy: PaginationStrategy.OFFSET,
+  paginationStrategy: PaginationStrategy.TIME_WINDOW,
   buildQuery,
   transformResponse,
 };

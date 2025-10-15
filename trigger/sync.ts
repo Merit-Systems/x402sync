@@ -33,7 +33,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
         if (config.paginationStrategy === PaginationStrategy.OFFSET) {
           allTransfers = await fetchWithOffsetPagination(config, since, now);
         } else {
-          allTransfers = await fetchWithTimeWindowing(config, since, now)
+          allTransfers = await fetchWithTimeWindowing(config, since, now);
         }
 
         logger.log(`[${config.network}] Found ${allTransfers.length} total transfers to sync from facilitators`);

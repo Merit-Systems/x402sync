@@ -15,7 +15,7 @@ export async function fetchWithOffsetPagination(
     logger.log(`[${config.network}] Fetching with offset: ${offset}`);
 
     const query = config.buildQuery(since, now, config.facilitators, PAGE_SIZE, offset);
-    const transfers = await executeBitqueryRequest(config, query)
+    const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
 
