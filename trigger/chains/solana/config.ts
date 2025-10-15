@@ -1,3 +1,4 @@
+import { USDC_MULTIPLIER } from "@/trigger/constants";
 import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
 
 function buildQuery(since: Date, now: Date, facilitators: string[], limit: number, offset?: number): string {
@@ -49,7 +50,7 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     transaction_from: transfer.transaction.feePayer,
     sender: transfer.sender.address,
     recipient: transfer.receiver.address,
-    amount: Math.round(parseFloat(transfer.amount) * 1_000_000),
+    amount: Math.round(parseFloat(transfer.amount) * USDC_MULTIPLIER),
     block_timestamp: new Date(transfer.block.timestamp.time),
     tx_hash: transfer.transaction.signature,
     chain: network,

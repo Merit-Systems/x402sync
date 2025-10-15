@@ -1,4 +1,5 @@
 import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
+import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "../../constants";
 
 function buildQuery(since: Date, now: Date, facilitators: string[], limit: number): string {
   return `
@@ -43,11 +44,11 @@ function buildQuery(since: Date, now: Date, facilitators: string[], limit: numbe
 
 export function transformResponse(data: any, network: string): TransferEventData[] {
   return data.EVM.Transfers.map((item: any) => ({
-    address: item.Transfer.Currency?.SmartContract || "0x0000000000000000000000000000000000000000",
+    address: item.Transfer.Currency?.SmartContract || DEFAULT_CONTRACT_ADDRESS,
     transaction_from: item.Transaction.From,
     sender: item.Transfer.Sender,
     recipient: item.Transfer.Receiver,
-    amount: Math.round(parseFloat(item.Transfer.Amount) * 1_000_000),
+    amount: Math.round(parseFloat(item.Transfer.Amount) * USDC_MULTIPLIER),
     block_timestamp: new Date(item.Block.Time),
     tx_hash: item.Transaction.Hash,
     chain: network,
