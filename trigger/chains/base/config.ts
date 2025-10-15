@@ -40,13 +40,13 @@ function buildQuery(since: Date, now: Date, facilitators: string[]): string {
   `;
 }
 
-function transformResponse(data: any, network: string): TransferEventData[] {
+export function transformResponse(data: any, network: string): TransferEventData[] {
   return data.EVM.Transfers.map((item: any) => ({
     address: item.Transfer.Currency?.SmartContract || "0x0000000000000000000000000000000000000000",
     transaction_from: item.Transaction.From,
     sender: item.Transfer.Sender,
     recipient: item.Transfer.Receiver,
-    amount: parseFloat(item.Transfer.Amount),
+    amount: Math.round(parseFloat(item.Transfer.Amount) * 1_000_000),
     block_timestamp: new Date(item.Block.Time),
     tx_hash: item.Transaction.Hash,
     chain: network,
