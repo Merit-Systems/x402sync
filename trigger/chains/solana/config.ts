@@ -1,10 +1,10 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
 import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[], limit: number, offset?: number): string {
+function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limit: number, offset?: number): string {
   return `
     {
-      solana(network: solana) {
+      solana(network: ${config.chain}) {
         sent: transfers(
           options: {desc: "block.height", limit: ${limit}, offset: ${offset}}
           time: {
@@ -13,7 +13,7 @@ function buildQuery(since: Date, now: Date, facilitators: string[], limit: numbe
           }
           amount: {gt: 0}
           signer: {
-            in: ${JSON.stringify(facilitators)}
+            in: ${JSON.stringify(config.facilitators)}
           }
         ) {
           block {
@@ -61,6 +61,7 @@ export const solanaChainConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
   maxDuration: 300,
   network: "solana",
+  chain: "solana",
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],

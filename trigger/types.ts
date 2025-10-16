@@ -19,11 +19,12 @@ export interface ChainSyncConfig {
   maxDuration: number;
   
   network: string;
+  chain: string;
   facilitators: string[];
   fallbackTime: number;
   apiUrl: string;
   paginationStrategy: PaginationStrategy;
   
-  buildQuery: (since: Date, now: Date, facilitators: string[], limit: number, offset?: number) => string;
+  buildQuery: (config: ChainSyncConfig, since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }

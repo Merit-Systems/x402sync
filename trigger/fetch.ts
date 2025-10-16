@@ -14,7 +14,7 @@ export async function fetchWithOffsetPagination(
   while (hasMore) {
     logger.log(`[${config.network}] Fetching with offset: ${offset}`);
 
-    const query = config.buildQuery(since, now, config.facilitators, PAGE_SIZE, offset);
+    const query = config.buildQuery(config, since, now, PAGE_SIZE, offset);
     const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
@@ -44,7 +44,7 @@ export async function fetchWithTimeWindowing(
     
     logger.log(`[${config.network}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
 
-    const query = config.buildQuery(currentStart, currentEnd, config.facilitators, PAGE_SIZE);
+    const query = config.buildQuery(config, currentStart, currentEnd, PAGE_SIZE);
     const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
