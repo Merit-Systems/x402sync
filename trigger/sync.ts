@@ -29,19 +29,14 @@ export function createChainSyncTask(config: ChainSyncConfig) {
             ? mostRecentTransfer[0].block_timestamp 
             : new Date(now.getTime() - config.fallbackTime);
 
-          logger.log(`[${config.network}] Fetching transfers since: ${since.toISOString()} until: ${now.toISOString()}`);
+        logger.log(`[${config.network}] Fetching transfers for ${facilitator} since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-          const facilitatorConfig = {
-            ...config,
-            facilitators: [facilitator]  // Query only this facilitator
-          };
-
-          let transfers = [];
-          if (config.paginationStrategy === PaginationStrategy.OFFSET) {
-            transfers = await fetchWithOffsetPagination(facilitatorConfig, since, now);
-          } else {
-            transfers = await fetchWithTimeWindowing(facilitatorConfig, since, now);
-          }
+        let transfers = [];
+        if (config.paginationStrategy === PaginationStrategy.OFFSET) {
+          transfers = await fetchWithOffsetPagination(config, [facilitator], since, now);
+        } else {
+          transfers = await fetchWithTimeWindowing(config, [facilitator], since, now);
+        }
 
           logger.log(`[${config.network}] Found ${transfers.length} transfers from ${facilitator}`);
           allTransfers.push(...transfers);

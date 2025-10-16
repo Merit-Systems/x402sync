@@ -1,7 +1,7 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, QueryConfig, TransferEventData } from "../../types";
 
-function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limit: number, offset?: number): string {
+function buildQuery(config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number): string {
   return `
     {
       solana(network: ${config.chain}) {
@@ -13,7 +13,7 @@ function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limit: numb
           }
           amount: {gt: 0}
           signer: {
-            in: ${JSON.stringify(config.facilitators)}
+            in: ${JSON.stringify(facilitators)}
           }
         ) {
           block {

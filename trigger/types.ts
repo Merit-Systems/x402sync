@@ -14,19 +14,20 @@ export enum PaginationStrategy {
   OFFSET = 'offset',
 }
 
-export interface ChainSyncConfig {
-  cron: string;
-  maxDuration: number;
-  
+export interface QueryConfig {
   network: string;
   chain: string;
-  facilitators: string[];
-  fallbackTime: number;
   apiUrl: string;
   paginationStrategy: PaginationStrategy;
-  
-  buildQuery: (config: ChainSyncConfig, since: Date, now: Date, limit: number, offset?: number) => string;
+  buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
+}
+
+export interface ChainSyncConfig extends QueryConfig {
+  cron: string;
+  maxDuration: number;
+  fallbackTime: number;
+  facilitators: string[];
 }
 
 export interface EvmChainConfig {

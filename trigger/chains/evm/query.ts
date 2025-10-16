@@ -1,7 +1,14 @@
 import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, QueryConfig, TransferEventData } from "@/trigger/types";
 
-export function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limit: number): string {
+export function buildQuery(
+    config: QueryConfig,
+    facilitators: string[],
+    since: Date,
+    now: Date,
+    limit: number,
+    offset?: number
+): string {
   return `
     {
       EVM(network: ${config.chain}, dataset: combined) {
@@ -9,7 +16,7 @@ export function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limi
           limit: {count: ${limit}}
           where: {
             Transaction: {
-              From: {in: ${JSON.stringify(config.facilitators)}}
+              From: {in: ${JSON.stringify(facilitators)}}
               Time: {
                 since: "${since.toISOString()}"
                 till: "${now.toISOString()}"
