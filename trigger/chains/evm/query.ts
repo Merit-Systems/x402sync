@@ -1,5 +1,5 @@
 import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, TransferEventData } from "@/trigger/types";
 
 export function buildQuery(config: ChainSyncConfig, since: Date, now: Date, limit: number): string {
   return `
@@ -53,4 +53,15 @@ export function transformResponse(data: any, network: string): TransferEventData
     tx_hash: item.Transaction.Hash,
     chain: network,
   }));
+}
+
+export function createEvmChainConfig(params: EvmChainConfig): ChainSyncConfig {
+    return {
+        ...params,
+        fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months
+        apiUrl: "https://streaming.bitquery.io/graphql",
+        paginationStrategy: PaginationStrategy.TIME_WINDOW,
+        buildQuery,
+        transformResponse,
+    }
 }

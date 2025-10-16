@@ -28,3 +28,11 @@ export interface ChainSyncConfig {
   buildQuery: (config: ChainSyncConfig, since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }
+
+export interface EvmChainConfig {
+    cron: string;
+    maxDuration: number;
+    network: string;
+    chain: string;
+    facilitators: string[];
+}

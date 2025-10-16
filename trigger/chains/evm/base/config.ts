@@ -1,8 +1,6 @@
-import { ChainSyncConfig, PaginationStrategy } from "../../../types";
-import { buildQuery, transformResponse } from "../query";
+import { createEvmChainConfig } from "../query";
 
-
-export const baseChainConfig: ChainSyncConfig = {
+export const baseChainConfig = createEvmChainConfig({
   cron: "*/30 * * * *",
   maxDuration: 1000,
   network: "base",
@@ -13,9 +11,4 @@ export const baseChainConfig: ChainSyncConfig = {
     "0xc6699d2aada6c36dfea5c248dd70f9cb0235cb63", // payAI
     "0x222c4367a2950f3b53af260e111fc3060b0983ff"  // aurracloud
   ],
-  fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
-  apiUrl: "https://streaming.bitquery.io/graphql",
-  paginationStrategy: PaginationStrategy.TIME_WINDOW,
-  buildQuery,
-  transformResponse,
-};
+});
