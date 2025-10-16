@@ -1,9 +1,10 @@
 import { logger } from "@trigger.dev/sdk";
-import { ChainSyncConfig } from "./types";
+import { QueryConfig } from "./types";
 import { PAGE_SIZE, TIME_WINDOW_DAYS } from "./constants";
 
 export async function fetchWithOffsetPagination(
-  config: ChainSyncConfig,
+  config: QueryConfig,
+  facilitators: string[],
   since: Date,
   now: Date
 ): Promise<any[]> {
@@ -14,7 +15,7 @@ export async function fetchWithOffsetPagination(
   while (hasMore) {
     logger.log(`[${config.network}] Fetching with offset: ${offset}`);
 
-    const query = config.buildQuery(since, now, config.facilitators, PAGE_SIZE, offset);
+    const query = config.buildQuery(config, facilitators, since, now, PAGE_SIZE, offset);
     const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
@@ -31,7 +32,8 @@ export async function fetchWithOffsetPagination(
 }
 
 export async function fetchWithTimeWindowing(
-  config: ChainSyncConfig,
+  config: QueryConfig,
+  facilitators: string[],
   since: Date,
   now: Date
 ): Promise<any[]> {
@@ -44,7 +46,7 @@ export async function fetchWithTimeWindowing(
     
     logger.log(`[${config.network}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
 
-    const query = config.buildQuery(currentStart, currentEnd, config.facilitators, PAGE_SIZE);
+    const query = config.buildQuery(config, facilitators, currentStart, currentEnd, PAGE_SIZE);
     const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
@@ -62,7 +64,7 @@ export async function fetchWithTimeWindowing(
 }
 
 async function executeBitqueryRequest(
-  config: ChainSyncConfig,
+  config: QueryConfig,
   query: string
 ): Promise<any[]> {
   const headers = new Headers();

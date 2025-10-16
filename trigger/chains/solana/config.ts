@@ -1,10 +1,17 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, QueryConfig, TransferEventData } from "../../types";
 
-function buildQuery(since: Date, now: Date, facilitators: string[], limit: number, offset?: number): string {
+function buildQuery(
+  config: QueryConfig,
+  facilitators: string[],
+  since: Date,
+  now: Date,
+  limit: number,
+  offset?: number
+): string {
   return `
     {
-      solana(network: solana) {
+      solana(network: ${config.chain}) {
         sent: transfers(
           options: {desc: "block.height", limit: ${limit}, offset: ${offset}}
           time: {
@@ -61,10 +68,11 @@ export const solanaChainConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
   maxDuration: 300,
   network: "solana",
+  chain: "solana",
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
-  fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
+  syncStartDate: new Date('2025-04-01'),
   apiUrl: "https://graphql.bitquery.io",
   paginationStrategy: PaginationStrategy.OFFSET,
   buildQuery,
