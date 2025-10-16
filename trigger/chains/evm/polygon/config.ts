@@ -8,4 +8,5 @@ export const polygonChainConfig = createEvmChainConfig({
   facilitators: [
     "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // Coinbase
   ],
+  syncStartDate: new Date('2025-08-01'),
 });

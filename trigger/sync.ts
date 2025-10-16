@@ -27,7 +27,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
           // Use the most recent transfer's timestamp, or use fallback time
           const since = mostRecentTransfer.length > 0 
             ? mostRecentTransfer[0].block_timestamp 
-            : new Date(now.getTime() - config.fallbackTime);
+            : config.syncStartDate;
 
         logger.log(`[${config.network}] Fetching transfers for ${facilitator} since: ${since.toISOString()} until: ${now.toISOString()}`);
 

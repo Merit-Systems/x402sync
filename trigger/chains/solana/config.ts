@@ -72,7 +72,7 @@ export const solanaChainConfig: ChainSyncConfig = {
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
-  fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000,
+  syncStartDate: new Date('2025-04-01'),
   apiUrl: "https://graphql.bitquery.io",
   paginationStrategy: PaginationStrategy.OFFSET,
   buildQuery,

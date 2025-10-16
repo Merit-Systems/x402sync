@@ -26,7 +26,7 @@ export interface QueryConfig {
 export interface ChainSyncConfig extends QueryConfig {
   cron: string;
   maxDuration: number;
-  fallbackTime: number;
+  syncStartDate: Date;
   facilitators: string[];
 }
 
@@ -36,4 +36,5 @@ export interface EvmChainConfig {
     network: string;
     chain: string;
     facilitators: string[];
+    syncStartDate: Date;
 }

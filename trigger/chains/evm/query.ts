@@ -65,7 +65,6 @@ export function transformResponse(data: any, network: string): TransferEventData
 export function createEvmChainConfig(params: EvmChainConfig): ChainSyncConfig {
     return {
         ...params,
-        fallbackTime: 6 * 30 * 24 * 60 * 60 * 1000, // 6 months
         apiUrl: "https://streaming.bitquery.io/graphql",
         paginationStrategy: PaginationStrategy.TIME_WINDOW,
         buildQuery,
