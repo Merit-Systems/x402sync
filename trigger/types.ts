@@ -12,6 +12,7 @@ export interface TransferEventData {
 export enum PaginationStrategy {
   TIME_WINDOW = 'time-window',
   OFFSET = 'offset',
+  BIGQUERY = 'bigquery',
 }
 
 export enum QueryProvider {

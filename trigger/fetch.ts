@@ -1,6 +1,55 @@
 import { logger } from "@trigger.dev/sdk";
-import { QueryConfig } from "./types";
+import { PaginationStrategy, QueryConfig, QueryProvider } from "./types";
 import { PAGE_SIZE, TIME_WINDOW_DAYS } from "./constants";
+import { BigQuery } from "@google-cloud/bigquery";
+
+export async function fetchTransfers(
+    config: QueryConfig,
+    facilitators: string[],
+    since: Date,
+    now: Date
+  ): Promise<any[]> {
+    if (config.provider === QueryProvider.BIGQUERY) {
+      return fetchWithBigQuery(config, facilitators, since, now);
+    }
+    
+    // Default to Bitquery
+    if (config.paginationStrategy === PaginationStrategy.OFFSET) {
+      return fetchWithOffsetPagination(config, facilitators, since, now);
+    } else {
+      return fetchWithTimeWindowing(config, facilitators, since, now);
+    }
+  }
+
+export async function fetchWithBigQuery(
+  config: QueryConfig,
+  facilitators: string[],
+  since: Date,
+  now: Date
+): Promise<any[]> {
+  const bq = new BigQuery(); // TODO: Uses GOOGLE_APPLICATION_CREDENTIALS
+
+  const allTransfers = [];
+  
+  // BigQuery queries can handle all facilitators in one query,
+  // but current architecture fetches per facilitator
+  for (const facilitator of facilitators) {
+    logger.log(`[${config.network}] Fetching BigQuery data for facilitator: ${facilitator}`);
+    
+    const query = config.buildQuery(config, [facilitator], since, now, 1000);
+    
+    const [rows] = await bq.query({
+      query,
+      location: 'US', // bigquery-public-data is in US region
+    });
+    
+    logger.log(`[${config.network}] BigQuery returned ${rows.length} rows`);
+    
+    allTransfers.push(...config.transformResponse(rows, config.network));
+  }
+  
+  return allTransfers;
+}
 
 export async function fetchWithOffsetPagination(
   config: QueryConfig,

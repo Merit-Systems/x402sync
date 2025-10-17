@@ -1,7 +1,7 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig, PaginationStrategy } from "./types";
-import { fetchWithOffsetPagination, fetchWithTimeWindowing } from "./fetch";
+import { ChainSyncConfig } from "./types";
+import { fetchTransfers } from "./fetch";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
@@ -31,12 +31,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
         logger.log(`[${config.network}] Fetching transfers for ${facilitator} since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-        let transfers = [];
-        if (config.paginationStrategy === PaginationStrategy.OFFSET) {
-          transfers = await fetchWithOffsetPagination(config, [facilitator], since, now);
-        } else {
-          transfers = await fetchWithTimeWindowing(config, [facilitator], since, now);
-        }
+        const transfers = await fetchTransfers(config, [facilitator], since, now);
 
           logger.log(`[${config.network}] Found ${transfers.length} transfers from ${facilitator}`);
           allTransfers.push(...transfers);
