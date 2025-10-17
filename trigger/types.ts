@@ -14,9 +14,15 @@ export enum PaginationStrategy {
   OFFSET = 'offset',
 }
 
+export enum QueryProvider {
+    BITQUERY = 'bitquery',
+    BIGQUERY = 'bigquery',
+}
+
 export interface QueryConfig {
   network: string;
   chain: string;
+  provider: QueryProvider;
   apiUrl: string;
   paginationStrategy: PaginationStrategy;
   buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;

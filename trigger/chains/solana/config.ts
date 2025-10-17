@@ -1,5 +1,5 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, QueryConfig, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../types";
 
 function buildQuery(
   config: QueryConfig,
@@ -75,6 +75,7 @@ export const solanaChainConfig: ChainSyncConfig = {
   syncStartDate: new Date('2025-04-01'),
   apiUrl: "https://graphql.bitquery.io",
   paginationStrategy: PaginationStrategy.OFFSET,
+  provider: QueryProvider.BITQUERY,
   buildQuery,
   transformResponse,
 };
