@@ -21,7 +21,6 @@ export enum QueryProvider {
 }
 
 export interface QueryConfig {
-  network: string;
   chain: string;
   provider: QueryProvider;
   apiUrl: string;

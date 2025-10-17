@@ -41,7 +41,7 @@ SELECT
   SAFE_DIVIDE(t.value, POW(10, t.decimals)) AS amount,
   t.block_timestamp, 
   t.tx_signature AS tx_hash, 
-  '${config.network}' AS chain
+  '${config.chain}' AS chain
 FROM \`robust-catalyst-475116-s4.crypto_solana_mainnet_us.Token Transfers\` t
 JOIN signer_sigs s ON t.tx_signature = s.signature
 WHERE t.block_timestamp >= start_ts AND t.block_timestamp < end_ts
@@ -68,7 +68,6 @@ function transformResponse(data: any[], network: string): TransferEventData[] {
 export const solanaBigQueryConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
   maxDuration: 300,
-  network: "solana-bigquery",
   chain: "solana",
   provider: QueryProvider.BIGQUERY,
   apiUrl: "", // Not used for BigQuery

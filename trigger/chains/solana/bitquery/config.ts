@@ -1,5 +1,5 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../types";
+import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
   config: QueryConfig,
@@ -67,7 +67,6 @@ function transformResponse(data: any, network: string): TransferEventData[] {
 export const solanaChainConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
   maxDuration: 300,
-  network: "solana",
   chain: "solana",
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
