@@ -2,7 +2,7 @@ import { logger } from "@trigger.dev/sdk/v3";
 import { QueryConfig } from "../../types";
 import { PAGE_SIZE, TIME_WINDOW_DAYS } from "../../constants";
 
-export async function fetchTransfersWithOffsetPagination(
+export async function fetchWithOffsetPagination(
   config: QueryConfig,
   facilitators: string[],
   since: Date,
@@ -31,7 +31,7 @@ export async function fetchTransfersWithOffsetPagination(
   return allTransfers;
 }
 
-export async function fetchTransfersWithTimeWindowing(
+export async function fetchWithTimeWindowing(
   config: QueryConfig,
   facilitators: string[],
   since: Date,

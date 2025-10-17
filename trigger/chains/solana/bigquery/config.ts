@@ -75,7 +75,6 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
   syncStartDate: new Date('2025-04-01'),
-  paginationStrategy: PaginationStrategy.BIGQUERY,
   buildQuery,
   transformResponse,
 };

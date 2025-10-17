@@ -2,7 +2,7 @@ import { logger } from "@trigger.dev/sdk/v3";
 import { BigQuery } from "@google-cloud/bigquery";
 import { QueryConfig } from "../../types";
 
-export async function fetchTransfersWithBigQuery(
+export async function fetchWithBigQuery(
   config: QueryConfig,
   facilitators: string[],
   since: Date,

@@ -12,7 +12,6 @@ export interface TransferEventData {
 export enum PaginationStrategy {
   TIME_WINDOW = 'time-window',
   OFFSET = 'offset',
-  BIGQUERY = 'bigquery',
 }
 
 export enum QueryProvider {
@@ -24,7 +23,8 @@ export interface QueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl: string;
-  paginationStrategy: PaginationStrategy;
+  // we do not support a pagination strategy for bigquery rn
+  paginationStrategy?: PaginationStrategy;
   buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }
