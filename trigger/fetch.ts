@@ -27,7 +27,7 @@ export async function fetchWithBigQuery(
   since: Date,
   now: Date
 ): Promise<any[]> {
-  const bq = new BigQuery(); // TODO: Uses GOOGLE_APPLICATION_CREDENTIALS
+  const bq = new BigQuery();
 
   const allTransfers = [];
   
@@ -37,10 +37,11 @@ export async function fetchWithBigQuery(
     logger.log(`[${config.network}] Fetching BigQuery data for facilitator: ${facilitator}`);
     
     const query = config.buildQuery(config, [facilitator], since, now, 1000);
+
+    logger.log(`[${config.network}] BigQuery query: ${query}`);
     
     const [rows] = await bq.query({
       query,
-      location: 'US', // bigquery-public-data is in US region
     });
     
     logger.log(`[${config.network}] BigQuery returned ${rows.length} rows`);
