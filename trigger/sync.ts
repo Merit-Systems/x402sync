@@ -5,7 +5,7 @@ import { fetchTransfers } from "./fetch";
 
 export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
-    id: config.network + "-sync-transfers",
+    id: config.network + "-sync-transfers-" + config.provider,
     cron: config.cron,
     maxDuration: config.maxDuration,
     run: async () => {
