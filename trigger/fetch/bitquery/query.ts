@@ -1,5 +1,5 @@
 import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, QueryConfig, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "@/trigger/types";
 
 export function buildQuery(
     config: QueryConfig,
@@ -67,6 +67,8 @@ export function createEvmChainConfig(params: EvmChainConfig): ChainSyncConfig {
         ...params,
         apiUrl: "https://streaming.bitquery.io/graphql",
         paginationStrategy: PaginationStrategy.TIME_WINDOW,
+        provider: QueryProvider.BITQUERY,
+        timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 1 week
         buildQuery,
         transformResponse,
     }
