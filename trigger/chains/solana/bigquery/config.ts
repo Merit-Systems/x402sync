@@ -7,7 +7,6 @@ import {
   TransferEventData 
 } from "@/trigger/types";
 
-
 function buildQuery(
   config: QueryConfig,
   facilitators: string[],
