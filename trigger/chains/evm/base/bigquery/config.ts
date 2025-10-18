@@ -1,4 +1,4 @@
-import { createEvmChainConfig } from "../../bitquery/query";
+import { createEvmChainConfig } from "../../../../fetch/bitquery/query";
 
 export const baseChainConfig = createEvmChainConfig({
   cron: "*/30 * * * *",
