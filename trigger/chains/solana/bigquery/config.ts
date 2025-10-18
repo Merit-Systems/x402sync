@@ -87,6 +87,7 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
   provider: QueryProvider.BIGQUERY,
   apiUrl: "", // Not used for BigQuery
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
+  timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 1 week
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],

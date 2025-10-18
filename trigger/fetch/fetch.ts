@@ -10,30 +10,33 @@ export async function fetchTransfers(
     since: Date,
     now: Date
   ): Promise<any[]> {
-    if (config.paginationStrategy === PaginationStrategy.TIME_WINDOW) {
-      if (config.provider === QueryProvider.BIGQUERY) {
+    const strategy = config.paginationStrategy;
+    const provider = config.provider;
+
+    if (strategy === PaginationStrategy.TIME_WINDOW) {
+      if (provider === QueryProvider.BIGQUERY) {
         return fetchWithTimeWindowingBigQuery(config, facilitators, since, now);
       }
       
-      if (config.provider === QueryProvider.BITQUERY) {
+      if (provider === QueryProvider.BITQUERY) {
         return fetchWithTimeWindowingBitquery(config, facilitators, since, now);
       }
 
-      if (config.provider === QueryProvider.CDP) {
+      if (provider === QueryProvider.CDP) {
         return fetchWithTimeWindowingCDP(config, facilitators, since, now);
       }
 
-      throw new Error(`Unsupported provider for time windowing: ${config.provider}`);
+      throw new Error(`Unsupported provider for time windowing: ${provider}`);
     }
 
-    if (config.paginationStrategy === PaginationStrategy.OFFSET) {
-      if (config.provider !== QueryProvider.BITQUERY) {
-        throw new Error(`Offset pagination only supported for Bitquery, not ${config.provider}`);
+    if (strategy === PaginationStrategy.OFFSET) {
+      if (provider !== QueryProvider.BITQUERY) {
+        throw new Error(`Offset pagination only supported for Bitquery, not ${provider}`);
       }
       return fetchWithOffsetPagination(config, facilitators, since, now);
     }
 
-    throw new Error(`Unsupported pagination strategy: ${config.paginationStrategy}`);
+    throw new Error(`Unsupported pagination strategy: ${strategy as string}`);
   }
 
   export async function fetchWithTimeWindowing(

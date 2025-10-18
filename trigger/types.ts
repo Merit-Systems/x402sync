@@ -20,17 +20,27 @@ export enum QueryProvider {
     CDP = 'cdp',
 }
 
-export interface QueryConfig {
+interface BaseQueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl: string;
-  paginationStrategy?: PaginationStrategy;
-  timeWindowMs?: number; // Time window in milliseconds for time-window pagination
   buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }
 
-export interface ChainSyncConfig extends QueryConfig {
+interface TimeWindowQueryConfig extends BaseQueryConfig {
+  paginationStrategy: PaginationStrategy.TIME_WINDOW;
+  timeWindowMs: number;
+}
+
+interface OffsetQueryConfig extends BaseQueryConfig {
+  paginationStrategy: PaginationStrategy.OFFSET;
+  timeWindowMs?: never;
+}
+
+export type QueryConfig = TimeWindowQueryConfig | OffsetQueryConfig;
+
+export type ChainSyncConfig = QueryConfig & {
   cron: string;
   maxDuration: number;
   syncStartDate: Date;

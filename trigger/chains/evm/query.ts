@@ -68,6 +68,7 @@ export function createEvmChainConfig(params: EvmChainConfig): ChainSyncConfig {
         apiUrl: "https://streaming.bitquery.io/graphql",
         paginationStrategy: PaginationStrategy.TIME_WINDOW,
         provider: QueryProvider.BITQUERY,
+        timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 1 week
         buildQuery,
         transformResponse,
     }
