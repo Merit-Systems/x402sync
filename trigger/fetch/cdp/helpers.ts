@@ -8,7 +8,7 @@ interface CdpFetchRequest {
     expiresIn?: number;
 }
 
-const DEFAULT_HOST = 'api.developer.coinbase.com';
+const DEFAULT_HOST = 'api.cdp.coinbase.com';
 
 async function generateCdpJwt(
     request: CdpFetchRequest
@@ -59,11 +59,11 @@ export async function cdpFetch<T>(
 }
 
 export async function runCdpSqlQuery(sql: string): Promise<any[]> {
-    const maxRetires = 5;
+    const maxRetries = 5;
     let attempt = 0;
-    
-    try {
-        while (attempt < maxRetires) {
+
+    while (attempt < maxRetries) {
+        try {
             const data = await cdpFetch<{ result: any[] | null }>({
                 requestMethod: 'POST',
                 requestPath: '/platform/v2/data/query/run',
@@ -72,22 +72,22 @@ export async function runCdpSqlQuery(sql: string): Promise<any[]> {
             });
 
             return data.result ?? [];
-        }
-    } catch (error) {
-        logger.error(`[CDP] Error running SQL query: ${error}`);
+        } catch (error) {
+            logger.error(`[CDP] Error running SQL query: ${error}`);
 
-        const isRateLimit =
-            error instanceof Error &&
-            (error.message.toLowerCase().includes('rate limit') ||
-                error.message.includes('429'));
-        
-        if (isRateLimit && attempt < maxRetires - 1) {
-            const delay = Math.pow(2, attempt + 1) * 500 + Math.random() * 200;
-            logger.warn(`[CDP] Rate limit hit, retrying in ${delay}ms...`);
-            await new Promise((resolve) => setTimeout(resolve, delay));
-            attempt++;
-        } else {
-            throw error;
+            const isRateLimit =
+                error instanceof Error &&
+                (error.message.toLowerCase().includes('rate limit') ||
+                    error.message.includes('429'));
+
+            if (isRateLimit && attempt < maxRetries - 1) {
+                const delay = Math.pow(2, attempt) * 500 + Math.random() * 200;
+                logger.warn(`[CDP] Rate limit hit, retrying in ${delay}ms...`);
+                await new Promise((resolve) => setTimeout(resolve, delay));
+                attempt++;
+            } else {
+                throw error;
+            }
         }
     }
 

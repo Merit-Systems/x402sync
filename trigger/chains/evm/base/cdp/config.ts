@@ -57,7 +57,7 @@ export const baseCdpConfig: ChainSyncConfig = {
   maxDuration: 300,
   chain: "base",
   provider: QueryProvider.CDP,
-  apiUrl: "api.developer.coinbase.com",
+  apiUrl: "api.cdp.coinbase.com",
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
   timeWindowMs: 24 * 60 * 60 * 1000, // 1 day
   facilitators: [
