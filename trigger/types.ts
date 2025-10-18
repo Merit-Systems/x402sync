@@ -23,8 +23,8 @@ export interface QueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl: string;
-  // we do not support a pagination strategy for bigquery rn
   paginationStrategy?: PaginationStrategy;
+  timeWindowMs?: number; // Time window in milliseconds for time-window pagination
   buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;
   transformResponse: (data: any, network: string) => TransferEventData[];
 }

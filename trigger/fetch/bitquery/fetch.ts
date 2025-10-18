@@ -1,6 +1,7 @@
 import { logger } from "@trigger.dev/sdk/v3";
 import { QueryConfig } from "../../types";
-import { PAGE_SIZE, TIME_WINDOW_DAYS } from "../../constants";
+import { PAGE_SIZE } from "../../constants";
+import { fetchWithTimeWindowing } from "../fetch";
 
 export async function fetchWithOffsetPagination(
   config: QueryConfig,
@@ -31,36 +32,24 @@ export async function fetchWithOffsetPagination(
   return allTransfers;
 }
 
-export async function fetchWithTimeWindowing(
+export async function fetchWithTimeWindowingBitquery(
   config: QueryConfig,
   facilitators: string[],
   since: Date,
   now: Date
 ): Promise<any[]> {
-  const allTransfers = [];
-  let currentStart = new Date(since);
-  const timeWindowMs = TIME_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+  const executeQuery = async (query: string) => {
+    return executeBitqueryRequest(config, query);
+  };
 
-  while (currentStart < now) {
-    const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));
-    
-    logger.log(`[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
-
-    const query = config.buildQuery(config, facilitators, currentStart, currentEnd, PAGE_SIZE);
-    const transfers = await executeBitqueryRequest(config, query);
-
-    allTransfers.push(...transfers);
-    logger.log(`[${config.chain}] Fetched ${transfers.length} transfers in this time window`);
-
-    // If we got the full PAGE_SIZE, this window has more data
-    if (transfers.length >= PAGE_SIZE) {
-      logger.warn(`[${config.chain}] Window returned ${transfers.length} transfers (at or above limit). Some data might be missing. Consider reducing TIME_WINDOW_DAYS.`);
-    }
-
-    currentStart = currentEnd;
-  }
-
-  return allTransfers;
+  return fetchWithTimeWindowing(
+    config,
+    facilitators,
+    since,
+    now,
+    PAGE_SIZE,
+    executeQuery
+  );
 }
 
 async function executeBitqueryRequest(

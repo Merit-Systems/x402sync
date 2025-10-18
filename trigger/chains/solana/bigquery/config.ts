@@ -26,13 +26,27 @@ DECLARE start_ts TIMESTAMP DEFAULT TIMESTAMP('${since.toISOString()}');
 DECLARE end_ts TIMESTAMP DEFAULT TIMESTAMP('${now.toISOString()}');
 
 WITH signer_sigs AS (
-  SELECT tx.signature,
-    (SELECT a.pubkey FROM UNNEST(tx.accounts) a WITH OFFSET AS idx
-     WHERE a.signer = TRUE ORDER BY idx LIMIT 1) AS fee_payer
+  SELECT DISTINCT
+    tx.signature,
+    (
+      SELECT a.pubkey
+      FROM UNNEST(tx.accounts) AS a WITH OFFSET AS idx
+      WHERE a.signer = TRUE
+      ORDER BY idx
+      LIMIT 1
+    ) AS fee_payer,
+    (
+      SELECT a.pubkey
+      FROM UNNEST(tx.accounts) AS a
+      WHERE a.signer = TRUE AND a.pubkey IN UNNEST(signer_pubkeys)
+      LIMIT 1
+    ) AS matched_signer
   FROM \`robust-catalyst-475116-s4.crypto_solana_mainnet_us.Transactions\` tx
   WHERE tx.block_timestamp >= start_ts AND tx.block_timestamp < end_ts
-    AND EXISTS (SELECT 1 FROM UNNEST(tx.accounts) a
-                WHERE a.signer = TRUE AND a.pubkey = signer_pubkey)
+    AND EXISTS (
+      SELECT 1 FROM UNNEST(tx.accounts) a
+      WHERE a.signer = TRUE AND a.pubkey IN UNNEST(signer_pubkeys)
+    )
 )
 SELECT 
   t.mint AS address, 
@@ -72,6 +86,7 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
   chain: "solana",
   provider: QueryProvider.BIGQUERY,
   apiUrl: "", // Not used for BigQuery
+  paginationStrategy: PaginationStrategy.TIME_WINDOW,
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
