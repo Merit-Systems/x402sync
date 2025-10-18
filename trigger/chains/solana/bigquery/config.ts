@@ -15,10 +15,12 @@ function buildQuery(
   limit: number,
   offset?: number
 ): string {
-  const signerPubkey = facilitators[0]; // Handle one facilitator at a time
+  const facilitatorsArray = facilitators.map(f => `"${f}"`).join(',\n  ');
 
   return `
-DECLARE signer_pubkey STRING DEFAULT '${signerPubkey}';
+DECLARE signer_pubkeys ARRAY<STRING> DEFAULT [
+  ${facilitatorsArray}
+];
 DECLARE usdc_mint STRING DEFAULT '${USDC_SOLANA}';
 DECLARE start_ts TIMESTAMP DEFAULT TIMESTAMP('${since.toISOString()}');
 DECLARE end_ts TIMESTAMP DEFAULT TIMESTAMP('${now.toISOString()}');
