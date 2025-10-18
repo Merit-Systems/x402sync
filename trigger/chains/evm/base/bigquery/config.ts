@@ -1,4 +1,4 @@
-import { createEvmChainConfig } from "../query";
+import { createEvmChainConfig } from "../../query";
 
 export const baseChainConfig = createEvmChainConfig({
   cron: "*/30 * * * *",

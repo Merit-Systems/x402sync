@@ -17,6 +17,7 @@ export enum PaginationStrategy {
 export enum QueryProvider {
     BITQUERY = 'bitquery',
     BIGQUERY = 'bigquery',
+    CDP = 'cdp',
 }
 
 export interface QueryConfig {

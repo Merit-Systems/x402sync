@@ -2,6 +2,7 @@ import { PaginationStrategy, QueryConfig, QueryProvider } from "../types";
 import { fetchWithOffsetPagination, fetchWithTimeWindowingBitquery } from "./bitquery/fetch";
 import { fetchWithTimeWindowingBigQuery } from "./bigquery/fetch";
 import { logger } from "@trigger.dev/sdk";
+import { fetchWithTimeWindowingCDP } from "./cdp/fetch";
 
 export async function fetchTransfers(
     config: QueryConfig,
@@ -16,6 +17,10 @@ export async function fetchTransfers(
       
       if (config.provider === QueryProvider.BITQUERY) {
         return fetchWithTimeWindowingBitquery(config, facilitators, since, now);
+      }
+
+      if (config.provider === QueryProvider.CDP) {
+        return fetchWithTimeWindowingCDP(config, facilitators, since, now);
       }
 
       throw new Error(`Unsupported provider for time windowing: ${config.provider}`);

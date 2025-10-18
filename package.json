@@ -18,6 +18,7 @@
     "trigger:deploy": "trigger deploy"
   },
   "dependencies": {
+    "@coinbase/cdp-sdk": "^1.38.4",
     "@google-cloud/bigquery": "^8.1.1",
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^6.17.1",
