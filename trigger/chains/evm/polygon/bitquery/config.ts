@@ -1,4 +1,4 @@
-import { createEvmChainConfig } from "../query";
+import { createEvmChainConfig } from "../../bitquery/query";
 
 export const polygonChainConfig = createEvmChainConfig({
   cron: "*/30 * * * *",
