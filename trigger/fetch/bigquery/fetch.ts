@@ -1,12 +1,10 @@
 import { logger } from "@trigger.dev/sdk/v3";
 import { BigQuery } from "@google-cloud/bigquery";
-import { QueryConfig } from "../../types";
+import { ChainSyncConfig } from "../../types";
 import { fetchWithTimeWindowing } from "../fetch";
-import { PAGE_SIZE } from "@/trigger/constants";
-
 
 export async function fetchWithTimeWindowingBigQuery(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date
@@ -22,7 +20,7 @@ export async function fetchWithTimeWindowingBigQuery(
     
     logger.log(`[${config.chain}] BigQuery returned ${rows.length} rows`);
     
-    return config.transformResponse(rows, config.chain);
+    return config.transformResponse(rows, config);
   };
 
   return fetchWithTimeWindowing(
@@ -30,7 +28,6 @@ export async function fetchWithTimeWindowingBigQuery(
     facilitators,
     since,
     now,
-    PAGE_SIZE,
     executeQuery
   );
 }

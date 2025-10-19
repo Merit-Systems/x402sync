@@ -1,11 +1,11 @@
-import { PaginationStrategy, QueryConfig, QueryProvider } from "../types";
+import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider } from "../types";
 import { fetchWithOffsetPagination, fetchWithTimeWindowingBitquery } from "./bitquery/fetch";
 import { fetchWithTimeWindowingBigQuery } from "./bigquery/fetch";
 import { logger } from "@trigger.dev/sdk";
 import { fetchWithTimeWindowingCDP } from "./cdp/fetch";
 
 export async function fetchTransfers(
-    config: QueryConfig,
+    config: ChainSyncConfig,
     facilitators: string[],
     since: Date,
     now: Date
@@ -40,30 +40,29 @@ export async function fetchTransfers(
   }
 
   export async function fetchWithTimeWindowing(
-    config: QueryConfig,
+    config: ChainSyncConfig,
     facilitators: string[],
     since: Date,
     now: Date,
-    limit: number,
     executeQuery: (query: string) => Promise<any[]>
   ): Promise<any[]> {
     const allTransfers = [];
     let currentStart = new Date(since);
-    const timeWindowMs = config.timeWindowMs!;
+    const timeWindowMs = config.timeWindowInMs!;
   
     while (currentStart < now) {
       const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));
       
       logger.log(`[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
   
-      const query = config.buildQuery(config, facilitators, currentStart, currentEnd, limit);
+      const query = config.buildQuery(config, facilitators, currentStart, currentEnd, config.limit);
       const results = await executeQuery(query);
   
       allTransfers.push(...results);
       logger.log(`[${config.chain}] Fetched ${results.length} results in this time window`);
   
-      if (results.length >= limit) {
-        logger.warn(`[${config.chain}] Window returned ${results.length} results (at or above limit of ${limit}). Some data might be missing. Consider reducing TIME_WINDOW_DAYS or increasing the limit.`);
+      if (results.length >= config.limit) {
+        logger.warn(`[${config.chain}] Window returned ${results.length} results (at or above limit of ${config.limit}). Some data might be missing. Consider reducing TIME_WINDOW_DAYS or increasing the limit.`);
       }
   
       currentStart = currentEnd;

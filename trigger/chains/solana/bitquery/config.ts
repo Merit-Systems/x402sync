@@ -2,18 +2,17 @@ import { USDC_MULTIPLIER } from "@/trigger/constants";
 import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date,
-  limit: number,
   offset?: number
 ): string {
   return `
     {
       solana(network: ${config.chain}) {
         sent: transfers(
-          options: {desc: "block.height", limit: ${limit}, offset: ${offset}}
+          options: {desc: "block.height", limit: ${config.limit}, offset: ${offset}}
           time: {
             since: "${since.toISOString()}"
             till: "${now.toISOString()}"
@@ -51,7 +50,7 @@ function buildQuery(
   `;
 }
 
-function transformResponse(data: any, network: string): TransferEventData[] {
+function transformResponse(data: any, config: ChainSyncConfig): TransferEventData[] {
   return data.solana.sent.map((transfer: any) => ({
     address: transfer.currency.address,
     transaction_from: transfer.transaction.feePayer,
@@ -60,21 +59,23 @@ function transformResponse(data: any, network: string): TransferEventData[] {
     amount: Math.round(parseFloat(transfer.amount) * USDC_MULTIPLIER),
     block_timestamp: new Date(transfer.block.timestamp.time),
     tx_hash: transfer.transaction.signature,
-    chain: network,
+    chain: config.chain,
+    provider: config.provider,
   }));
 }
 
 export const solanaChainConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
-  maxDuration: 300,
+  maxDurationInSeconds: 300,
   chain: "solana",
+  provider: QueryProvider.BITQUERY,
+  apiUrl: "https://graphql.bitquery.io",
+  paginationStrategy: PaginationStrategy.OFFSET,
+  limit: 20_000,
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
   syncStartDate: new Date('2025-04-01'),
-  apiUrl: "https://graphql.bitquery.io",
-  paginationStrategy: PaginationStrategy.OFFSET,
-  provider: QueryProvider.BITQUERY,
   buildQuery,
   transformResponse,
 };

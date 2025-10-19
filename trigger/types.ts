@@ -7,6 +7,7 @@ export interface TransferEventData {
   block_timestamp: Date;
   tx_hash: string;
   chain: string;
+  provider: string;
 }
 
 export enum PaginationStrategy {
@@ -24,27 +25,28 @@ interface BaseQueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl: string;
-  buildQuery: (config: QueryConfig, facilitators: string[], since: Date, now: Date, limit: number, offset?: number) => string;
-  transformResponse: (data: any, network: string) => TransferEventData[];
+  buildQuery: (config: ChainSyncConfig, facilitators: string[], since: Date, now: Date, offset?: number) => string;
+  transformResponse: (data: any, config: ChainSyncConfig) => TransferEventData[];
 }
 
 interface TimeWindowQueryConfig extends BaseQueryConfig {
   paginationStrategy: PaginationStrategy.TIME_WINDOW;
-  timeWindowMs: number;
+  timeWindowInMs: number;
 }
 
 interface OffsetQueryConfig extends BaseQueryConfig {
   paginationStrategy: PaginationStrategy.OFFSET;
-  timeWindowMs?: never;
+  timeWindowInMs?: never;
 }
 
 export type QueryConfig = TimeWindowQueryConfig | OffsetQueryConfig;
 
 export type ChainSyncConfig = QueryConfig & {
   cron: string;
-  maxDuration: number;
+  maxDurationInSeconds: number;
   syncStartDate: Date;
   facilitators: string[];
+  limit: number;
 }
 
 export interface EvmChainConfig {

@@ -24,4 +24,5 @@ model TransferEvent {
   block_timestamp   DateTime // The timestamp of the block
   tx_hash           String   // The transaction hash
   chain             String   // The chain of the event
+  provider          String   // The provider we get the data from
 }

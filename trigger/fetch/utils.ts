@@ -11,7 +11,7 @@ export async function fetchWithTimeWindowing(
 ): Promise<any[]> {
   const allTransfers = [];
   let currentStart = new Date(since);
-  const timeWindowMs = config.timeWindowMs!;
+  const timeWindowMs = config.timeWindowInMs!;
 
   while (currentStart < now) {
     const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));

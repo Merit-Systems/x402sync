@@ -2,17 +2,15 @@ import { TRANSFER_EVENT_SIG, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/con
 import {
   ChainSyncConfig,
   PaginationStrategy,
-  QueryConfig,
   QueryProvider,
   TransferEventData
 } from "@/trigger/types";
 
 function buildQuery(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date,
-  limit: number,
   offset?: number
 ): string {
   const facilitatorsArray = facilitators.map(f => `"${f.toLowerCase()}"`).join(',\n  ');
@@ -45,10 +43,10 @@ WHERE l.block_timestamp >= start_ts
   AND l.topics[SAFE_OFFSET(0)] = transfer_topic
   AND LOWER(t.from_address) IN UNNEST(facilitator_addresses)
 ORDER BY l.block_timestamp DESC
-LIMIT ${limit}`;
+LIMIT ${config.limit}`;
 }
 
-function transformResponse(data: any[], network: string): TransferEventData[] {
+function transformResponse(data: any[], config: ChainSyncConfig): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -58,17 +56,19 @@ function transformResponse(data: any[], network: string): TransferEventData[] {
     block_timestamp: new Date(row.block_timestamp.value), // BigQuery returns timestamp objects
     tx_hash: row.tx_hash,
     chain: row.chain,
+    provider: config.provider,
   }));
 }
 
 export const polygonBigQueryConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
-  maxDuration: 300,
+  maxDurationInSeconds: 300,
   chain: "polygon",
   provider: QueryProvider.BIGQUERY,
   apiUrl: "", // Not used for BigQuery
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
-  timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 1 week
+  timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
+  limit: 20_000,
   facilitators: [
     "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // x402rs
   ],

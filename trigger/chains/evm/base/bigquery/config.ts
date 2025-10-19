@@ -1,4 +1,4 @@
-import { createEvmChainConfig } from "../../../../fetch/bitquery/query";
+import { createEvmChainConfig } from "@/trigger/fetch/bitquery/query";
 
 export const baseChainConfig = createEvmChainConfig({
   cron: "*/30 * * * *",
@@ -11,5 +11,5 @@ export const baseChainConfig = createEvmChainConfig({
     "0xc6699d2aada6c36dfea5c248dd70f9cb0235cb63", // payAI
     "0x222c4367a2950f3b53af260e111fc3060b0983ff"  // aurracloud
   ],
-  syncStartDate: new Date('2025-04-01'),
+  syncStartDate: new Date('2025-10-01'),
 });

@@ -2,17 +2,15 @@ import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 import { 
   ChainSyncConfig, 
   PaginationStrategy, 
-  QueryConfig, 
   QueryProvider, 
   TransferEventData 
 } from "@/trigger/types";
 
 function buildQuery(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date,
-  limit: number,
   offset?: number
 ): string {
   const facilitatorsArray = facilitators.map(f => `"${f}"`).join(',\n  ');
@@ -64,10 +62,10 @@ WHERE t.block_timestamp >= start_ts AND t.block_timestamp < end_ts
   AND t.value IS NOT NULL 
   AND t.decimals IS NOT NULL
 ORDER BY t.block_timestamp DESC
-LIMIT ${limit}`;
+LIMIT ${config.limit}`;
 }
 
-function transformResponse(data: any[], network: string): TransferEventData[] {
+function transformResponse(data: any[], config: ChainSyncConfig): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -77,17 +75,19 @@ function transformResponse(data: any[], network: string): TransferEventData[] {
     block_timestamp: new Date(row.block_timestamp.value), // BigQuery returns timestamp objects
     tx_hash: row.tx_hash,
     chain: row.chain,
+    provider: config.provider,
   }));
 }
 
 export const solanaBigQueryConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
-  maxDuration: 300,
+  maxDurationInSeconds: 300,
   chain: "solana",
   provider: QueryProvider.BIGQUERY,
   apiUrl: "", // Not used for BigQuery
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
-  timeWindowMs: 7 * 24 * 60 * 60 * 1000, // 1 week
+  timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
+  limit: 20_000,
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],

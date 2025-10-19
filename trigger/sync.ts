@@ -7,7 +7,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
     id: config.chain + "-sync-transfers-" + config.provider,
     cron: config.cron,
-    maxDuration: config.maxDuration,
+    maxDuration: config.maxDurationInSeconds,
     run: async () => {
       try {
         const now = new Date();
