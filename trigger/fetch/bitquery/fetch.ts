@@ -1,6 +1,5 @@
 import { logger } from "@trigger.dev/sdk/v3";
 import { ChainSyncConfig, QueryConfig } from "../../types";
-import { fetchWithTimeWindowing } from "../fetch";
 
 export async function fetchWithOffsetPagination(
   config: ChainSyncConfig,
@@ -31,23 +30,16 @@ export async function fetchWithOffsetPagination(
   return allTransfers;
 }
 
-export async function fetchWithTimeWindowingBitquery(
+export async function fetchBitquery(
   config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date
 ): Promise<any[]> {
-  const executeQuery = async (query: string) => {
-    return executeBitqueryRequest(config, query);
-  };
-
-  return fetchWithTimeWindowing(
-    config,
-    facilitators,
-    since,
-    now,
-    executeQuery
-  );
+  logger.log(`[${config.chain}] Fetching Bitquery data from ${since.toISOString()} to ${now.toISOString()}`);
+  
+  const query = config.buildQuery(config, facilitators, since, now);
+  return executeBitqueryRequest(config, query);
 }
 
 async function executeBitqueryRequest(
@@ -66,7 +58,7 @@ async function executeBitqueryRequest(
     body: rawQuery,
   };
 
-  const response = await fetch(config.apiUrl, requestOptions);
+  const response = await fetch(config.apiUrl!, requestOptions);
 
   if (!response.ok) {
     const errorText = await response.text();
