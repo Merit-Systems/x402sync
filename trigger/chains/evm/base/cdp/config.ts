@@ -14,7 +14,7 @@ export const baseCdpConfig: ChainSyncConfig = {
   apiUrl: "api.cdp.coinbase.com",
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
   timeWindowInMs: ONE_DAY_IN_MS * 7,
-  limit: 20_000,
+  limit: 40_000, // NOTE(shafu): 20_000 is not enough
   facilitators: [
     {
       id: "coinbase",
