@@ -1,9 +1,9 @@
 import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, EvmChainConfig, PaginationStrategy, QueryProvider, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, EvmChainConfig, FacilitatorConfig, PaginationStrategy, QueryProvider, TransferEventData } from "@/trigger/types";
 
 export function buildQuery(
     config: ChainSyncConfig,
-    facilitators: string[],
+    facilitator: FacilitatorConfig,
     since: Date,
     now: Date,
 ): string {
@@ -14,7 +14,7 @@ export function buildQuery(
           limit: {count: ${config.limit}}
           where: {
             Transaction: {
-              From: {in: ${JSON.stringify(facilitators)}}
+              From: {in: ${JSON.stringify(facilitator.address)}}
               Time: {
                 since: "${since.toISOString()}"
                 till: "${now.toISOString()}"

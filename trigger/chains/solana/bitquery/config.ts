@@ -1,9 +1,9 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
+import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   offset?: number
@@ -19,7 +19,7 @@ function buildQuery(
           }
           amount: {gt: 0}
           signer: {
-            in: ${JSON.stringify(facilitators)}
+            in: ${JSON.stringify(facilitator.address)}
           }
         ) {
           block {

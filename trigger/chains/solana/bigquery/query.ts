@@ -1,18 +1,16 @@
-import { ChainSyncConfig, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, FacilitatorConfig, TransferEventData } from "@/trigger/types";
 import { USDC_DECIMALS, USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 
 export function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   offset?: number
 ): string {
-  const facilitatorsArray = facilitators.map(f => `"${f}"`).join(',\n  ');
-
   return `
 DECLARE signer_pubkeys ARRAY<STRING> DEFAULT [
-  ${facilitatorsArray}
+  "${facilitator}"
 ];
 DECLARE usdc_mint STRING DEFAULT '${USDC_SOLANA}';
 DECLARE start_ts TIMESTAMP DEFAULT TIMESTAMP('${since.toISOString()}');
@@ -72,6 +70,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig): Transfe
     chain: row.chain,
     provider: config.provider,
     decimals: USDC_DECIMALS,
+    facilitator_id: row.facilitator_id,
   }));
 }
 

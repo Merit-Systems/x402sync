@@ -40,7 +40,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
           const { totalFetched } = await fetchTransfers(
             config,
-            [facilitator.address],
+            facilitator,
             since,
             now,
             async (batch) => {

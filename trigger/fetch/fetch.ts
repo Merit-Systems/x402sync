@@ -1,4 +1,4 @@
-import { ChainSyncConfig, PaginationStrategy, QueryProvider } from "../types";
+import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryProvider } from "../types";
 import { fetchWithOffsetPagination, fetchBitquery } from "./bitquery/fetch";
 import { fetchBigQuery } from "./bigquery/fetch";
 import { logger } from "@trigger.dev/sdk";
@@ -6,7 +6,7 @@ import { fetchCDP } from "./cdp/fetch";
 
 export async function fetchTransfers(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>
@@ -14,11 +14,11 @@ export async function fetchTransfers(
   const strategy = config.paginationStrategy;
 
   if (strategy === PaginationStrategy.TIME_WINDOW) {
-    return fetchWithWindow(config, facilitators, since, now, onBatchFetched);
+    return fetchWithWindow(config, facilitator, since, now, onBatchFetched);
   }
 
   if (strategy === PaginationStrategy.OFFSET) {
-    return fetchWithOffset(config, facilitators, since, now, onBatchFetched);
+    return fetchWithOffset(config, facilitator, since, now, onBatchFetched);
   }
 
   throw new Error(`Unsupported pagination strategy: ${strategy as string}`);
@@ -26,7 +26,7 @@ export async function fetchTransfers(
 
 async function fetchWithWindow(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>
@@ -44,13 +44,13 @@ async function fetchWithWindow(
     let results: any[] | undefined;
 
     if (provider === QueryProvider.BIGQUERY) {
-      results = await fetchBigQuery(config, facilitators, currentStart, currentEnd);
+      results = await fetchBigQuery(config, facilitator, currentStart, currentEnd);
     }
     if (provider === QueryProvider.BITQUERY) {
-      results = await fetchBitquery(config, facilitators, currentStart, currentEnd);
+      results = await fetchBitquery(config, facilitator, currentStart, currentEnd);
     }
     if (provider === QueryProvider.CDP) {
-      results = await fetchCDP(config, facilitators, currentStart, currentEnd);
+      results = await fetchCDP(config, facilitator, currentStart, currentEnd);
     } 
 
     if (!results) {
@@ -76,7 +76,7 @@ async function fetchWithWindow(
 
 async function fetchWithOffset(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>
@@ -85,7 +85,7 @@ async function fetchWithOffset(
     throw new Error(`Offset pagination only supported for Bitquery, not ${config.provider}`);
   }
   
-  const results = await fetchWithOffsetPagination(config, facilitators, since, now);
+  const results = await fetchWithOffsetPagination(config, facilitator, since, now);
   
   if (onBatchFetched && results.length > 0) {
     await onBatchFetched(results);

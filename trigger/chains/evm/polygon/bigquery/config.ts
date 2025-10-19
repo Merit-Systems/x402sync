@@ -1,6 +1,7 @@
 import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
   ChainSyncConfig,
+  FacilitatorConfig,
   PaginationStrategy,
   QueryProvider,
   TransferEventData
@@ -8,16 +9,14 @@ import {
 
 function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   offset?: number
 ): string {
-  const facilitatorsArray = facilitators.map(f => `"${f.toLowerCase()}"`).join(',\n  ');
-
   return `
 DECLARE facilitator_addresses ARRAY<STRING> DEFAULT [
-  ${facilitatorsArray}
+  "${facilitator.address}"
 ];
 DECLARE usdc_address STRING DEFAULT '${USDC_POLYGON.toLowerCase()}';
 DECLARE transfer_topic STRING DEFAULT '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
@@ -58,6 +57,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
     chain: row.chain,
     provider: config.provider,
     decimals: USDC_DECIMALS,
+    facilitator_id: row.facilitator_id,
   }));
 }
 

@@ -9,6 +9,7 @@ export interface TransferEventData {
   chain: string;
   provider: string;
   decimals: number;
+  facilitator_id: string;
 }
 
 export enum PaginationStrategy {
@@ -26,8 +27,8 @@ interface BaseQueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl?: string;
-  buildQuery: (config: ChainSyncConfig, facilitators: string[], since: Date, now: Date, offset?: number) => string;
-  transformResponse: (data: any, config: ChainSyncConfig) => TransferEventData[];
+  buildQuery: (config: ChainSyncConfig, facilitator: FacilitatorConfig, since: Date, now: Date, offset?: number) => string;
+  transformResponse: (data: any, config: ChainSyncConfig, facilitator: FacilitatorConfig) => TransferEventData[];
 }
 
 interface TimeWindowQueryConfig extends BaseQueryConfig {
