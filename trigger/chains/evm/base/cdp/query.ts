@@ -42,7 +42,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig): Transfe
     transaction_from: row.transaction_from,
     sender: row.sender,
     recipient: row.to_address,
-    amount: Math.round(parseFloat(row.amount) / Math.pow(10, 6)), // USDC has 6 decimals
+    amount: parseFloat(row.amount),
     block_timestamp: new Date(row.block_timestamp),
     tx_hash: row.transaction_hash,
     chain: config.chain,
