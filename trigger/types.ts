@@ -8,6 +8,7 @@ export interface TransferEventData {
   tx_hash: string;
   chain: string;
   provider: string;
+  decimals: number;
 }
 
 export enum PaginationStrategy {

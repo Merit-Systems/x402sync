@@ -1,4 +1,4 @@
-import { TRANSFER_EVENT_SIG, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
+import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
   ChainSyncConfig,
   PaginationStrategy,
@@ -57,6 +57,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
     tx_hash: row.tx_hash,
     chain: row.chain,
     provider: config.provider,
+    decimals: USDC_DECIMALS,
   }));
 }
 

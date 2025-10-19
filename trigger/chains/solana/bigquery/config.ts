@@ -1,4 +1,4 @@
-import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
+import { USDC_DECIMALS, USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 import { 
   ChainSyncConfig, 
   PaginationStrategy, 
@@ -76,6 +76,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
     tx_hash: row.tx_hash,
     chain: row.chain,
     provider: config.provider,
+    decimals: USDC_DECIMALS,
   }));
 }
 

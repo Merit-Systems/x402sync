@@ -1,5 +1,5 @@
 import { ChainSyncConfig, TransferEventData } from "@/trigger/types";
-import { TRANSFER_EVENT_SIG, USDC_BASE } from "@/trigger/constants";
+import { TRANSFER_EVENT_SIG, USDC_BASE, USDC_DECIMALS } from "@/trigger/constants";
 
 export function buildQuery(
   config: ChainSyncConfig,
@@ -47,6 +47,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig): Transfe
     tx_hash: row.transaction_hash,
     chain: config.chain,
     provider: config.provider,
+    decimals: USDC_DECIMALS,
   }));
 }
 
