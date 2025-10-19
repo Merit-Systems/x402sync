@@ -62,7 +62,6 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
 }
 
 export const polygonBigQueryConfig: ChainSyncConfig = {
-  enabled: false,
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "polygon",
@@ -72,9 +71,13 @@ export const polygonBigQueryConfig: ChainSyncConfig = {
   timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
   limit: 20_000,
   facilitators: [
-    "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // x402rs
+    {
+        id: "x402rs",
+        enabled: false,
+        syncStartDate: new Date('2025-04-01'),
+        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec"
+    },
   ],
-  syncStartDate: new Date('2025-08-01'),
   buildQuery,
   transformResponse,
 };

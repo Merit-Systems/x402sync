@@ -65,7 +65,6 @@ function transformResponse(data: any, config: ChainSyncConfig): TransferEventDat
 }
 
 export const solanaChainConfig: ChainSyncConfig = {
-  enabled: false,
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "solana",
@@ -74,9 +73,13 @@ export const solanaChainConfig: ChainSyncConfig = {
   paginationStrategy: PaginationStrategy.OFFSET,
   limit: 20_000,
   facilitators: [
-    "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
+    {
+        id: "payAI",
+        syncStartDate: new Date('2025-04-01'),
+        enabled: false,
+        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+    }
   ],
-  syncStartDate: new Date('2025-04-01'),
   buildQuery,
   transformResponse,
 };

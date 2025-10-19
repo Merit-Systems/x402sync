@@ -10,20 +10,21 @@ export function createChainSyncTask(config: ChainSyncConfig) {
     maxDuration: config.maxDurationInSeconds,
     run: async () => {
       try {
-        if (!config.enabled) {
-          logger.log(`[${config.chain}] Sync is disabled for ${config.chain}`);
-          return;
-        }
         const now = new Date();
 
         for (const facilitator of config.facilitators) {
+          if (!facilitator.enabled) {
+            logger.log(`[${config.chain}] Sync is disabled for ${facilitator.id}`);
+            continue;
+          }
+
           // Get the most recent transfer for this chain and facilitator
           const mostRecentTransfer = await getTransferEvents({
             orderBy: { block_timestamp: 'desc' },
             take: 1,
             where: {
               chain: config.chain,
-              transaction_from: facilitator,
+              transaction_from: facilitator.address,
               provider: config.provider
             }
           });
@@ -31,7 +32,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
           // Use the most recent transfer's timestamp, or use fallback time
           const since = mostRecentTransfer.length > 0 
             ? mostRecentTransfer[0].block_timestamp 
-            : config.syncStartDate;
+            : facilitator.syncStartDate;
 
           logger.log(`[${config.chain}] Syncing ${facilitator} from ${since.toISOString()} to ${now.toISOString()}`);
 
@@ -39,7 +40,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
 
           const { totalFetched } = await fetchTransfers(
             config,
-            [facilitator],
+            [facilitator.address],
             since,
             now,
             async (batch) => {

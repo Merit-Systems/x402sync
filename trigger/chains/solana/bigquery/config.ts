@@ -7,7 +7,6 @@ import { buildQuery, transformResponse } from "./query";
 import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS } from "@/trigger/constants";
 
 export const solanaBigQueryConfig: ChainSyncConfig = {
-  enabled: true,
   cron: "*/30 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 5,
   chain: "solana",
@@ -16,9 +15,13 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
   timeWindowInMs: ONE_DAY_IN_MS * 1,
   limit: 20_000,
   facilitators: [
-    "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
+    {
+        id: "payAI",
+        syncStartDate: new Date('2025-04-01'),
+        enabled: true,
+        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+    }
   ],
-  syncStartDate: new Date('2025-08-01'),
   buildQuery,
   transformResponse,
 };
