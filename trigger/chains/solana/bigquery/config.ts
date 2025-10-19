@@ -12,12 +12,12 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
   chain: "solana",
   provider: QueryProvider.BIGQUERY,
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
-  timeWindowInMs: ONE_DAY_IN_MS * 1,
-  limit: 20_000,
+  timeWindowInMs: ONE_DAY_IN_MS * 30,
+  limit: 35_000, // NOTE(shafu): solana could be a lot more!
   facilitators: [
     {
         id: "payAI",
-        syncStartDate: new Date('2025-04-01'),
+        syncStartDate: new Date('2025-07-01'),
         enabled: true,
         address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
     }
