@@ -1,6 +1,7 @@
 import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
   ChainSyncConfig,
+  FacilitatorConfig,
   PaginationStrategy,
   QueryProvider,
   TransferEventData
@@ -8,16 +9,14 @@ import {
 
 function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   offset?: number
 ): string {
-  const facilitatorsArray = facilitators.map(f => `"${f.toLowerCase()}"`).join(',\n  ');
-
   return `
 DECLARE facilitator_addresses ARRAY<STRING> DEFAULT [
-  ${facilitatorsArray}
+  "${facilitator.address}"
 ];
 DECLARE usdc_address STRING DEFAULT '${USDC_POLYGON.toLowerCase()}';
 DECLARE transfer_topic STRING DEFAULT '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
@@ -58,6 +57,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
     chain: row.chain,
     provider: config.provider,
     decimals: USDC_DECIMALS,
+    facilitator_id: row.facilitator_id,
   }));
 }
 
@@ -71,9 +71,13 @@ export const polygonBigQueryConfig: ChainSyncConfig = {
   timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
   limit: 20_000,
   facilitators: [
-    "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // x402rs
+    {
+        id: "x402rs",
+        enabled: false,
+        syncStartDate: new Date('2025-04-01'),
+        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec"
+    },
   ],
-  syncStartDate: new Date('2025-08-01'),
   buildQuery,
   transformResponse,
 };

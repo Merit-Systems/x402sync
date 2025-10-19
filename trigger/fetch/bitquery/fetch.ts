@@ -1,10 +1,9 @@
 import { logger } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig, QueryConfig } from "../../types";
-import { fetchWithTimeWindowing } from "../fetch";
+import { ChainSyncConfig, FacilitatorConfig, QueryConfig } from "../../types";
 
 export async function fetchWithOffsetPagination(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date
 ): Promise<any[]> {
@@ -15,8 +14,8 @@ export async function fetchWithOffsetPagination(
   while (hasMore) {
     logger.log(`[${config.chain}] Fetching with offset: ${offset}`);
 
-    const query = config.buildQuery(config, facilitators, since, now, offset);
-    const transfers = await executeBitqueryRequest(config, query);
+    const query = config.buildQuery(config, facilitator, since, now, offset);
+    const transfers = await executeBitqueryRequest(config, facilitator, query);
 
     allTransfers.push(...transfers);
 
@@ -31,27 +30,21 @@ export async function fetchWithOffsetPagination(
   return allTransfers;
 }
 
-export async function fetchWithTimeWindowingBitquery(
+export async function fetchBitquery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date
 ): Promise<any[]> {
-  const executeQuery = async (query: string) => {
-    return executeBitqueryRequest(config, query);
-  };
-
-  return fetchWithTimeWindowing(
-    config,
-    facilitators,
-    since,
-    now,
-    executeQuery
-  );
+  logger.log(`[${config.chain}] Fetching Bitquery data from ${since.toISOString()} to ${now.toISOString()}`);
+  
+  const query = config.buildQuery(config, facilitator, since, now);
+  return executeBitqueryRequest(config, facilitator, query);
 }
 
 async function executeBitqueryRequest(
   config: ChainSyncConfig,
+  facilitator: FacilitatorConfig,
   query: string
 ): Promise<any[]> {
   const headers = new Headers();
@@ -66,7 +59,7 @@ async function executeBitqueryRequest(
     body: rawQuery,
   };
 
-  const response = await fetch(config.apiUrl, requestOptions);
+  const response = await fetch(config.apiUrl!, requestOptions);
 
   if (!response.ok) {
     const errorText = await response.text();
@@ -81,5 +74,5 @@ async function executeBitqueryRequest(
     throw new Error(`Bitquery GraphQL errors: ${JSON.stringify(result.errors)}`);
   }
 
-  return config.transformResponse(result.data, config);
+  return config.transformResponse(result.data, config, facilitator);
 }

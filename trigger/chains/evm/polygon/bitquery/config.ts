@@ -6,7 +6,11 @@ export const polygonChainConfig = createEvmChainConfig({
   network: "polygon",
   chain: "matic",
   facilitators: [
-    "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec" // Coinbase
+    {
+        id: "coinbase",
+        syncStartDate: new Date('2025-04-01'),
+        enabled: false,
+        address: "0xD8Dfc729cBd05381647EB5540D756f4f8Ad63eec"
+    }
   ],
-  syncStartDate: new Date('2025-08-01'),
 });

@@ -1,9 +1,9 @@
 import { USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
+import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
   offset?: number
@@ -19,7 +19,7 @@ function buildQuery(
           }
           amount: {gt: 0}
           signer: {
-            in: ${JSON.stringify(facilitators)}
+            in: ${JSON.stringify(facilitator.address)}
           }
         ) {
           block {
@@ -73,9 +73,13 @@ export const solanaChainConfig: ChainSyncConfig = {
   paginationStrategy: PaginationStrategy.OFFSET,
   limit: 20_000,
   facilitators: [
-    "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
+    {
+        id: "payAI",
+        syncStartDate: new Date('2025-04-01'),
+        enabled: false,
+        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+    }
   ],
-  syncStartDate: new Date('2025-04-01'),
   buildQuery,
   transformResponse,
 };

@@ -1,16 +1,12 @@
-import { ChainSyncConfig, TransferEventData } from "@/trigger/types";
+import { ChainSyncConfig, FacilitatorConfig, TransferEventData } from "@/trigger/types";
 import { TRANSFER_EVENT_SIG, USDC_BASE, USDC_DECIMALS } from "@/trigger/constants";
 
 export function buildQuery(
   config: ChainSyncConfig,
-  facilitators: string[],
+  facilitator: FacilitatorConfig,
   since: Date,
   now: Date,
 ): string {
-  const facilitatorsFilter = facilitators
-    .map((addr) => `transaction_from = '${addr.toLowerCase()}'`)
-    .join(" OR ");
-
   // Format dates for CDP SQL: YYYY-MM-DD HH:MM:SS.mmm
   const formatDateForSql = (date: Date) => {
     return date.toISOString().replace('T', ' ').replace('Z', '');
@@ -28,7 +24,7 @@ export function buildQuery(
     FROM base.events
     WHERE event_signature = '${TRANSFER_EVENT_SIG}'
       AND address = '${USDC_BASE.toLowerCase()}'
-      AND (${facilitatorsFilter})
+      AND transaction_from = '${facilitator.address.toLowerCase()}'
       AND block_timestamp >= '${formatDateForSql(since)}'
       AND block_timestamp < '${formatDateForSql(now)}'
     ORDER BY block_timestamp DESC
@@ -36,7 +32,7 @@ export function buildQuery(
   `;
 }
 
-export function transformResponse(data: any[], config: ChainSyncConfig): TransferEventData[] {
+export function transformResponse(data: any[], config: ChainSyncConfig, facilitator: FacilitatorConfig): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.contract_address,
     transaction_from: row.transaction_from,
@@ -48,6 +44,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig): Transfe
     chain: config.chain,
     provider: config.provider,
     decimals: USDC_DECIMALS,
+    facilitator_id: facilitator.id,
   }));
 }
 
