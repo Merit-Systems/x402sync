@@ -1,10 +1,9 @@
-import { QueryConfig } from "@/trigger/types";
+import { ChainSyncConfig } from "@/trigger/types";
 import { runCdpSqlQuery } from "./helpers";
 import { fetchWithTimeWindowing } from "../fetch";
-import { PAGE_SIZE } from "@/trigger/constants";
 
 export async function fetchWithTimeWindowingCDP(
-    config: QueryConfig,
+    config: ChainSyncConfig,
     facilitators: string[],
     since: Date,
     now: Date
@@ -12,7 +11,7 @@ export async function fetchWithTimeWindowingCDP(
     
     const executeQuery = async (query: string) => {
         const rows = await runCdpSqlQuery(query);
-        return config.transformResponse(rows, config.chain);
+        return config.transformResponse(rows, config);
     }
 
     return fetchWithTimeWindowing(
@@ -20,7 +19,6 @@ export async function fetchWithTimeWindowingCDP(
         facilitators,
         since,
         now,
-        PAGE_SIZE,
         executeQuery
     );
 }

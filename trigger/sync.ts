@@ -7,11 +7,10 @@ export function createChainSyncTask(config: ChainSyncConfig) {
   return schedules.task({
     id: config.chain + "-sync-transfers-" + config.provider,
     cron: config.cron,
-    maxDuration: config.maxDuration,
+    maxDuration: config.maxDurationInSeconds,
     run: async () => {
       try {
         const now = new Date();
-        let allTransfers = [];
 
         for (const facilitator of config.facilitators) {
           // Get the most recent transfer for this chain and facilitator
@@ -20,7 +19,8 @@ export function createChainSyncTask(config: ChainSyncConfig) {
             take: 1,
             where: {
               chain: config.chain,
-              transaction_from: facilitator
+              transaction_from: facilitator,
+              provider: config.provider
             }
           });
 
@@ -29,20 +29,18 @@ export function createChainSyncTask(config: ChainSyncConfig) {
             ? mostRecentTransfer[0].block_timestamp 
             : config.syncStartDate;
 
-        logger.log(`[${config.chain}] Fetching transfers for ${facilitator} since: ${since.toISOString()} until: ${now.toISOString()}`);
+          logger.log(`[${config.chain}] Fetching transfers for ${facilitator} since: ${since.toISOString()} until: ${now.toISOString()}`);
 
-        const transfers = await fetchTransfers(config, [facilitator], since, now);
+          const transfers = await fetchTransfers(config, [facilitator], since, now);
+
+          if (transfers.length > 0) {
+            const syncResult = await createManyTransferEvents(transfers);
+            logger.log(`[${config.chain}] Successfully synced ${syncResult.count} new transfers`);
+          }
 
           logger.log(`[${config.chain}] Found ${transfers.length} transfers from ${facilitator}`);
-          allTransfers.push(...transfers);
         }
 
-        logger.log(`[${config.chain}] Found ${allTransfers.length} total transfers to sync from facilitators`);
-
-        if (allTransfers.length > 0) {
-          const syncResult = await createManyTransferEvents(allTransfers);
-          logger.log(`[${config.chain}] Successfully synced ${syncResult.count} new transfers`);
-        }
 
       } catch (error) {
         logger.error(`[${config.chain}] Error syncing transfers:`, { error: String(error) });

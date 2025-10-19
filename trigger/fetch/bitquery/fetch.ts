@@ -1,10 +1,9 @@
 import { logger } from "@trigger.dev/sdk/v3";
-import { QueryConfig } from "../../types";
-import { PAGE_SIZE } from "../../constants";
+import { ChainSyncConfig, QueryConfig } from "../../types";
 import { fetchWithTimeWindowing } from "../fetch";
 
 export async function fetchWithOffsetPagination(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date
@@ -16,15 +15,15 @@ export async function fetchWithOffsetPagination(
   while (hasMore) {
     logger.log(`[${config.chain}] Fetching with offset: ${offset}`);
 
-    const query = config.buildQuery(config, facilitators, since, now, PAGE_SIZE, offset);
+    const query = config.buildQuery(config, facilitators, since, now, offset);
     const transfers = await executeBitqueryRequest(config, query);
 
     allTransfers.push(...transfers);
 
-    if (transfers.length < PAGE_SIZE) {
+    if (transfers.length < config.limit) {
       hasMore = false;
     } else {
-      offset += PAGE_SIZE;
+      offset += config.limit;
     }
 
   }
@@ -33,7 +32,7 @@ export async function fetchWithOffsetPagination(
 }
 
 export async function fetchWithTimeWindowingBitquery(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   facilitators: string[],
   since: Date,
   now: Date
@@ -47,13 +46,12 @@ export async function fetchWithTimeWindowingBitquery(
     facilitators,
     since,
     now,
-    PAGE_SIZE,
     executeQuery
   );
 }
 
 async function executeBitqueryRequest(
-  config: QueryConfig,
+  config: ChainSyncConfig,
   query: string
 ): Promise<any[]> {
   const headers = new Headers();
@@ -83,5 +81,5 @@ async function executeBitqueryRequest(
     throw new Error(`Bitquery GraphQL errors: ${JSON.stringify(result.errors)}`);
   }
 
-  return config.transformResponse(result.data, config.chain);
+  return config.transformResponse(result.data, config);
 }
