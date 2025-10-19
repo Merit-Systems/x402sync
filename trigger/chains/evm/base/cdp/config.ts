@@ -18,7 +18,7 @@ export const baseCdpConfig: ChainSyncConfig = {
   facilitators: [
     "0xdbdf3d8ed80f84c35d01c6c9f9271761bad90ba6",
   ],
-  syncStartDate: new Date('2025-10-17'),
+  syncStartDate: new Date('2025-04-01'),
   buildQuery,
   transformResponse,
 };

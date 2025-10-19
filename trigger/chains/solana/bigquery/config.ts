@@ -17,7 +17,7 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
   facilitators: [
     "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4" // PayAI
   ],
-  syncStartDate: new Date('2025-10-01'),
+  syncStartDate: new Date('2025-08-01'),
   buildQuery,
   transformResponse,
 };
