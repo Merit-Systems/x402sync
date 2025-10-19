@@ -1,6 +1,7 @@
 import { createEvmChainConfig } from "../../../../fetch/bitquery/query";
 
 export const polygonChainConfig = createEvmChainConfig({
+  enabled: false,
   cron: "*/30 * * * *",
   maxDuration: 1000,
   network: "polygon",

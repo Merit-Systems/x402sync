@@ -1,6 +1,7 @@
 import { createEvmChainConfig } from "@/trigger/fetch/bitquery/query";
 
 export const baseChainConfig = createEvmChainConfig({
+  enabled: true,
   cron: "*/30 * * * *",
   maxDuration: 1000,
   network: "base",

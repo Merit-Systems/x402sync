@@ -10,6 +10,10 @@ export function createChainSyncTask(config: ChainSyncConfig) {
     maxDuration: config.maxDurationInSeconds,
     run: async () => {
       try {
+        if (!config.enabled) {
+          logger.log(`[${config.chain}] Sync is disabled for ${config.chain}`);
+          return;
+        }
         const now = new Date();
 
         for (const facilitator of config.facilitators) {

@@ -62,6 +62,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
 }
 
 export const polygonBigQueryConfig: ChainSyncConfig = {
+  enabled: false,
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "polygon",

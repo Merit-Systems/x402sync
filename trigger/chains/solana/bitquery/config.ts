@@ -65,6 +65,7 @@ function transformResponse(data: any, config: ChainSyncConfig): TransferEventDat
 }
 
 export const solanaChainConfig: ChainSyncConfig = {
+  enabled: false,
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "solana",

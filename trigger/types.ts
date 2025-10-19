@@ -43,6 +43,7 @@ interface OffsetQueryConfig extends BaseQueryConfig {
 export type QueryConfig = TimeWindowQueryConfig | OffsetQueryConfig;
 
 export type ChainSyncConfig = QueryConfig & {
+  enabled: boolean;
   cron: string;
   maxDurationInSeconds: number;
   syncStartDate: Date;
@@ -51,6 +52,7 @@ export type ChainSyncConfig = QueryConfig & {
 }
 
 export interface EvmChainConfig {
+    enabled: boolean;
     cron: string;
     maxDuration: number;
     network: string;

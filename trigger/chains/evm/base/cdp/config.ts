@@ -7,6 +7,7 @@ import {
 import { buildQuery, transformResponse } from "./query";
 
 export const baseCdpConfig: ChainSyncConfig = {
+  enabled: true,
   cron: "*/30 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: "base",
