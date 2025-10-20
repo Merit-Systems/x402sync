@@ -9,3 +9,15 @@ export const TRANSFER_EVENT_SIG = "Transfer(address,address,uint256)";
 
 export const ONE_DAY_IN_MS = 24 * 60 * 60 * 1000;
 export const ONE_MINUTE_IN_SECONDS = 60;
+
+export const USDC_BASE_TOKEN = {
+  address: USDC_BASE,
+  decimals: USDC_DECIMALS,
+  symbol: "USDC"
+};
+
+export const USDC_SOLANA_TOKEN = {
+  address: USDC_SOLANA,
+  decimals: USDC_DECIMALS,
+  symbol: "USDC",
+};

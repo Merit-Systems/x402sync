@@ -27,8 +27,8 @@ interface BaseQueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl?: string;
-  buildQuery: (config: ChainSyncConfig, facilitator: FacilitatorConfig, since: Date, now: Date, offset?: number) => string;
-  transformResponse: (data: any, config: ChainSyncConfig, facilitator: FacilitatorConfig) => TransferEventData[];
+  buildQuery: (config: SyncConfig, facilitator: Facilitator, since: Date, now: Date, offset?: number) => string;
+  transformResponse: (data: any, config: SyncConfig, facilitator: Facilitator) => TransferEventData[];
 }
 
 interface TimeWindowQueryConfig extends BaseQueryConfig {
@@ -43,10 +43,10 @@ interface OffsetQueryConfig extends BaseQueryConfig {
 
 export type QueryConfig = TimeWindowQueryConfig | OffsetQueryConfig;
 
-export type ChainSyncConfig = QueryConfig & {
+export type SyncConfig = QueryConfig & {
   cron: string;
   maxDurationInSeconds: number;
-  facilitators: FacilitatorConfig[];
+  facilitators: Facilitator[];
   limit: number;
 }
 
@@ -55,12 +55,19 @@ export interface EvmChainConfig {
     maxDuration: number;
     network: string;
     chain: string;
-    facilitators: FacilitatorConfig[];
+    facilitators: Facilitator[];
 }
 
-export interface FacilitatorConfig {
+export interface Facilitator {
   id: string;
   syncStartDate: Date;
   enabled: boolean;
   address: string;
+  token: Token;
+}
+
+export interface Token {
+  address: string;
+  decimals: number;
+  symbol: string;
 }

@@ -1,18 +1,17 @@
 import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
-  ChainSyncConfig,
-  FacilitatorConfig,
+  SyncConfig,
+  Facilitator,
   PaginationStrategy,
   QueryProvider,
   TransferEventData
 } from "@/trigger/types";
 
 function buildQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
-  offset?: number
 ): string {
   return `
 DECLARE facilitator_addresses ARRAY<STRING> DEFAULT [
@@ -45,7 +44,7 @@ ORDER BY l.block_timestamp DESC
 LIMIT ${config.limit}`;
 }
 
-function transformResponse(data: any[], config: ChainSyncConfig): TransferEventData[] {
+function transformResponse(data: any[], config: SyncConfig): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -61,7 +60,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
   }));
 }
 
-export const polygonBigQueryConfig: ChainSyncConfig = {
+export const polygonBigQueryConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "polygon",
@@ -75,7 +74,12 @@ export const polygonBigQueryConfig: ChainSyncConfig = {
         id: "x402rs",
         enabled: false,
         syncStartDate: new Date('2025-04-01'),
-        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec"
+        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec",
+        token: {
+          address: USDC_POLYGON,
+          decimals: USDC_DECIMALS,
+          symbol: "USDC",
+        }
     },
   ],
   buildQuery,

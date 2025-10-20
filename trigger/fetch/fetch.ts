@@ -1,12 +1,12 @@
-import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryProvider } from "../types";
+import { SyncConfig, Facilitator, PaginationStrategy, QueryProvider } from "../types";
 import { fetchWithOffsetPagination, fetchBitquery } from "./bitquery/fetch";
 import { fetchBigQuery } from "./bigquery/fetch";
 import { logger } from "@trigger.dev/sdk";
 import { fetchCDP } from "./cdp/fetch";
 
 export async function fetchTransfers(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>
@@ -25,8 +25,8 @@ export async function fetchTransfers(
 }
 
 async function fetchWithWindow(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>
@@ -75,8 +75,8 @@ async function fetchWithWindow(
 }
 
 async function fetchWithOffset(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
   onBatchFetched?: (batch: any[]) => Promise<void>

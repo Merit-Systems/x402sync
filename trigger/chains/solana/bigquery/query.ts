@@ -1,9 +1,9 @@
-import { ChainSyncConfig, FacilitatorConfig, TransferEventData } from "@/trigger/types";
+import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
 import { USDC_DECIMALS, USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 
 export function buildQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
   offset?: number
@@ -58,7 +58,7 @@ export function buildQuery(
         LIMIT ${config.limit}`;
 }
 
-export function transformResponse(data: any[], config: ChainSyncConfig, facilitator: FacilitatorConfig): TransferEventData[] {
+export function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -69,7 +69,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig, facilita
     tx_hash: row.tx_hash,
     chain: row.chain,
     provider: config.provider,
-    decimals: USDC_DECIMALS,
+    decimals: facilitator.token.decimals,
     facilitator_id: facilitator.id,
   }));
 }

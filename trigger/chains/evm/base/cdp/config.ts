@@ -1,12 +1,12 @@
-import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS } from "@/trigger/constants";
+import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_BASE_TOKEN } from "@/trigger/constants";
 import {
-  ChainSyncConfig,
+  SyncConfig,
   PaginationStrategy,
   QueryProvider,
 } from "@/trigger/types";
 import { buildQuery, transformResponse } from "./query";
 
-export const baseCdpConfig: ChainSyncConfig = {
+export const baseCdpConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: "base",
@@ -17,28 +17,32 @@ export const baseCdpConfig: ChainSyncConfig = {
   limit: 40_000, // NOTE(shafu): 20_000 is not enough
   facilitators: [
     {
-      id: "coinbase",
-      syncStartDate: new Date('2025-05-05'),
-      enabled: true,
-      address: "0xdbdf3d8ed80f84c35d01c6c9f9271761bad90ba6"
+        id: "coinbase",
+        enabled: true,
+        syncStartDate: new Date('2025-05-05'),
+        address: "0xdbdf3d8ed80f84c35d01c6c9f9271761bad90ba6",
+        token: USDC_BASE_TOKEN,
     },
     {
         id: "payAI",
-        syncStartDate: new Date('2025-05-18'),
         enabled: true,
-        address: "0xc6699d2aada6c36dfea5c248dd70f9cb0235cb63"
+        syncStartDate: new Date('2025-05-18'),
+        address: "0xc6699d2aada6c36dfea5c248dd70f9cb0235cb63",
+        token: USDC_BASE_TOKEN,
     },
     {
         id: "aurracloud",
-        syncStartDate: new Date('2025-10-05'),
         enabled: true,
-        address: "0x222c4367a2950f3b53af260e111fc3060b0983ff"
+        syncStartDate: new Date('2025-10-05'),
+        address: "0x222c4367a2950f3b53af260e111fc3060b0983ff",
+        token: USDC_BASE_TOKEN,
     },
     {
         id: "thirdweb",
-        syncStartDate: new Date('2025-10-07'),
         enabled: true,
-        address: "0x80c08de1a05df2bd633cf520754e40fde3c794d3"
+        syncStartDate: new Date('2025-10-07'),
+        address: "0x80c08de1a05df2bd633cf520754e40fde3c794d3",
+        token: USDC_BASE_TOKEN,
     }
   ],
   buildQuery,

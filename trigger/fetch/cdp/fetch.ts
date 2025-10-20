@@ -1,10 +1,10 @@
-import { ChainSyncConfig, FacilitatorConfig } from "@/trigger/types";
+import { SyncConfig, Facilitator } from "@/trigger/types";
 import { runCdpSqlQuery } from "./helpers";
 import { logger } from "@trigger.dev/sdk/v3";
 
 export async function fetchCDP(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date
 ): Promise<any[]> {

@@ -1,9 +1,9 @@
 import { logger } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig, FacilitatorConfig, QueryConfig } from "../../types";
+import { SyncConfig, Facilitator, QueryConfig } from "../../types";
 
 export async function fetchWithOffsetPagination(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date
 ): Promise<any[]> {
@@ -31,8 +31,8 @@ export async function fetchWithOffsetPagination(
 }
 
 export async function fetchBitquery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date
 ): Promise<any[]> {
@@ -43,8 +43,8 @@ export async function fetchBitquery(
 }
 
 async function executeBitqueryRequest(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   query: string
 ): Promise<any[]> {
   const headers = new Headers();
