@@ -20,7 +20,7 @@ export function buildQuery(
       parameters['to']::String AS to_address,
       transaction_hash,
       block_timestamp,
-      parameters['value']::UInt256 AS amount
+      parameters['value']::UInt256 AS amount,
       log_index
     FROM base.events
     WHERE event_signature = '${TRANSFER_EVENT_SIG}'
