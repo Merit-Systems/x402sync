@@ -47,6 +47,7 @@ export function buildQuery(
         SAFE_DIVIDE(t.value, POW(10, t.decimals)) AS amount,
         t.block_timestamp, 
         t.tx_signature AS tx_hash, 
+        ROW_NUMBER() OVER (PARTITION BY t.tx_signature ORDER BY t.block_timestamp, t.source, t.destination) - 1 AS transfer_index,
         '${config.chain}' AS chain
         FROM \`robust-catalyst-475116-s4.crypto_solana_mainnet_us.Token Transfers\` t
         JOIN signer_sigs s ON t.tx_signature = s.signature
@@ -71,6 +72,7 @@ export function transformResponse(data: any[], config: SyncConfig, facilitator: 
     provider: config.provider,
     decimals: facilitator.token.decimals,
     facilitator_id: facilitator.id,
+    log_index: row.transfer_index,
   }));
 }
 
