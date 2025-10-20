@@ -8,7 +8,9 @@ export async function fetchBigQuery(
   since: Date,
   now: Date
 ): Promise<any[]> {
-  const bq = new BigQuery();
+  const bq = new BigQuery({
+    credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS!)
+  });
   
   logger.log(`[${config.chain}] Fetching BigQuery data from ${since.toISOString()} to ${now.toISOString()}`);
   
