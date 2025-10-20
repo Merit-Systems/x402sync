@@ -10,6 +10,8 @@ export interface TransferEventData {
   provider: string;
   decimals: number;
   facilitator_id: string;
+
+  log_index?: number;
 }
 
 export enum PaginationStrategy {

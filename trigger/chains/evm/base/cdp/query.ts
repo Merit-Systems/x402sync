@@ -21,6 +21,7 @@ export function buildQuery(
       transaction_hash,
       block_timestamp,
       parameters['value']::UInt256 AS amount
+      log_index
     FROM base.events
     WHERE event_signature = '${TRANSFER_EVENT_SIG}'
       AND address = '${facilitator.token.address.toLowerCase()}'
@@ -41,6 +42,7 @@ export function transformResponse(data: any[], config: SyncConfig, facilitator: 
     amount: parseFloat(row.amount),
     block_timestamp: new Date(row.block_timestamp),
     tx_hash: row.transaction_hash,
+    log_index: row.log_index,
     chain: config.chain,
     provider: config.provider,
     decimals: facilitator.token.decimals,
