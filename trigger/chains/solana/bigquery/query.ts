@@ -46,11 +46,22 @@ export function buildQuery(
         t.destination AS recipient,
         SAFE_DIVIDE(t.value, POW(10, t.decimals)) AS amount,
         t.block_timestamp, 
-        t.tx_signature AS tx_hash, 
-        ROW_NUMBER() OVER (PARTITION BY t.tx_signature ORDER BY t.block_timestamp, t.source, t.destination) - 1 AS transfer_index,
+        t.tx_signature AS tx_hash,
+        COALESCE(
+            CASE 
+                WHEN i.parent_index IS NOT NULL THEN i.parent_index * 1000 + i.index
+                ELSE i.index
+            END,
+            ROW_NUMBER() OVER (PARTITION BY t.tx_signature ORDER BY t.block_timestamp, t.source, t.destination, t.value) - 1
+        ) AS transfer_index,
         '${config.chain}' AS chain
         FROM \`robust-catalyst-475116-s4.crypto_solana_mainnet_us.Token Transfers\` t
         JOIN signer_sigs s ON t.tx_signature = s.signature
+        LEFT JOIN \`robust-catalyst-475116-s4.crypto_solana_mainnet_us.Instructions\` i
+            ON t.tx_signature = i.tx_signature
+            AND t.block_timestamp = i.block_timestamp
+            AND i.program = 'spl-token'
+            AND i.instruction_type IN ('transfer', 'transferChecked')
         WHERE t.block_timestamp >= start_ts AND t.block_timestamp < end_ts
         AND t.mint = usdc_mint 
         AND t.value IS NOT NULL 
