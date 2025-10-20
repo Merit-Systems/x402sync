@@ -69,7 +69,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig, facilita
     tx_hash: row.tx_hash,
     chain: row.chain,
     provider: config.provider,
-    decimals: USDC_DECIMALS,
+    decimals: facilitator.token.decimals,
     facilitator_id: facilitator.id,
   }));
 }

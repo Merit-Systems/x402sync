@@ -43,7 +43,7 @@ export function transformResponse(data: any[], config: ChainSyncConfig, facilita
     tx_hash: row.transaction_hash,
     chain: config.chain,
     provider: config.provider,
-    decimals: USDC_DECIMALS,
+    decimals: facilitator.token.decimals,
     facilitator_id: facilitator.id,
   }));
 }
