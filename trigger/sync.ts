@@ -18,7 +18,6 @@ export function createChainSyncTask(config: SyncConfig) {
             continue;
           }
 
-          // Get the most recent transfer for this chain and facilitator
           const mostRecentTransfer = await getTransferEvents({
             orderBy: { block_timestamp: 'desc' },
             take: 1,
@@ -29,10 +28,7 @@ export function createChainSyncTask(config: SyncConfig) {
             }
           });
 
-          // Use the most recent transfer's timestamp, or use fallback time
-          const since = mostRecentTransfer.length > 0 
-            ? mostRecentTransfer[0].block_timestamp 
-            : facilitator.syncStartDate;
+          const since = mostRecentTransfer[0]?.block_timestamp ?? facilitator.syncStartDate;
 
           logger.log(`[${config.chain}] Syncing ${facilitator.id} from ${since.toISOString()} to ${now.toISOString()}`);
 
