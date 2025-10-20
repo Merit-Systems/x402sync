@@ -31,6 +31,13 @@ export const baseCdpConfig: SyncConfig = {
         token: USDC_BASE_TOKEN,
     },
     {
+        id: "x402rs",
+        enabled: true,
+        syncStartDate: new Date('2024-12-05'),
+        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec",
+        token: USDC_BASE_TOKEN,
+    },
+    {
         id: "aurracloud",
         enabled: true,
         syncStartDate: new Date('2025-10-05'),
