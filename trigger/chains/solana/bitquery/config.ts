@@ -1,9 +1,9 @@
 import { USDC_MULTIPLIER, USDC_SOLANA_TOKEN } from "@/trigger/constants";
-import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
+import { SyncConfig, Facilitator, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
   offset?: number
@@ -50,7 +50,7 @@ function buildQuery(
   `;
 }
 
-function transformResponse(data: any, config: ChainSyncConfig): TransferEventData[] {
+function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
   return data.solana.sent.map((transfer: any) => ({
     address: transfer.currency.address,
     transaction_from: transfer.transaction.feePayer,
@@ -64,7 +64,7 @@ function transformResponse(data: any, config: ChainSyncConfig): TransferEventDat
   }));
 }
 
-export const solanaChainConfig: ChainSyncConfig = {
+export const solanaChainConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "solana",

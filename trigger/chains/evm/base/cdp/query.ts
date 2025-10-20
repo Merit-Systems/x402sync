@@ -1,9 +1,9 @@
-import { ChainSyncConfig, FacilitatorConfig, TransferEventData } from "@/trigger/types";
-import { TRANSFER_EVENT_SIG, USDC_BASE, USDC_DECIMALS } from "@/trigger/constants";
+import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
+import { TRANSFER_EVENT_SIG } from "@/trigger/constants";
 
 export function buildQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
 ): string {
@@ -23,7 +23,7 @@ export function buildQuery(
       parameters['value']::UInt256 AS amount
     FROM base.events
     WHERE event_signature = '${TRANSFER_EVENT_SIG}'
-      AND address = '${USDC_BASE.toLowerCase()}'
+      AND address = '${facilitator.token.address.toLowerCase()}'
       AND transaction_from = '${facilitator.address.toLowerCase()}'
       AND block_timestamp >= '${formatDateForSql(since)}'
       AND block_timestamp < '${formatDateForSql(now)}'
@@ -32,7 +32,7 @@ export function buildQuery(
   `;
 }
 
-export function transformResponse(data: any[], config: ChainSyncConfig, facilitator: FacilitatorConfig): TransferEventData[] {
+export function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.contract_address,
     transaction_from: row.transaction_from,

@@ -1,10 +1,10 @@
 import { logger } from "@trigger.dev/sdk/v3";
 import { BigQuery } from "@google-cloud/bigquery";
-import { ChainSyncConfig, FacilitatorConfig } from "../../types";
+import { SyncConfig, Facilitator } from "../../types";
 
 export async function fetchBigQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date
 ): Promise<any[]> {

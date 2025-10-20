@@ -1,9 +1,9 @@
 import { createManyTransferEvents, getTransferEvents } from "@/db/services";
 import { logger, schedules } from "@trigger.dev/sdk/v3";
-import { ChainSyncConfig } from "./types";
+import { SyncConfig } from "./types";
 import { fetchTransfers } from "./fetch/fetch";
 
-export function createChainSyncTask(config: ChainSyncConfig) {
+export function createChainSyncTask(config: SyncConfig) {
   return schedules.task({
     id: config.chain + "-sync-transfers-" + config.provider,
     cron: config.cron,

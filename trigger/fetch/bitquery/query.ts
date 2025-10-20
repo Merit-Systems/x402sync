@@ -1,9 +1,9 @@
 import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { ChainSyncConfig, EvmChainConfig, FacilitatorConfig, PaginationStrategy, QueryProvider, TransferEventData } from "@/trigger/types";
+import { SyncConfig, EvmChainConfig, Facilitator, PaginationStrategy, QueryProvider, TransferEventData } from "@/trigger/types";
 
 export function buildQuery(
-    config: ChainSyncConfig,
-    facilitator: FacilitatorConfig,
+    config: SyncConfig,
+    facilitator: Facilitator,
     since: Date,
     now: Date,
 ): string {
@@ -47,7 +47,7 @@ export function buildQuery(
   `;
 }
 
-export function transformResponse(data: any, config: ChainSyncConfig): TransferEventData[] {
+export function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
   return data.EVM.Transfers.map((item: any) => ({
     address: item.Transfer.Currency?.SmartContract || DEFAULT_CONTRACT_ADDRESS,
     transaction_from: item.Transaction.From,
@@ -61,7 +61,7 @@ export function transformResponse(data: any, config: ChainSyncConfig): TransferE
   }));
 }
 
-export function createEvmChainConfig(params: EvmChainConfig): ChainSyncConfig {
+export function createEvmChainConfig(params: EvmChainConfig): SyncConfig {
     return {
         ...params,
         apiUrl: "https://streaming.bitquery.io/graphql",

@@ -1,12 +1,12 @@
-import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_BASE, USDC_BASE_TOKEN, USDC_DECIMALS } from "@/trigger/constants";
+import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_BASE_TOKEN } from "@/trigger/constants";
 import {
-  ChainSyncConfig,
+  SyncConfig,
   PaginationStrategy,
   QueryProvider,
 } from "@/trigger/types";
 import { buildQuery, transformResponse } from "./query";
 
-export const baseCdpConfig: ChainSyncConfig = {
+export const baseCdpConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: "base",

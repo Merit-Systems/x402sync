@@ -1,15 +1,15 @@
 import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
-  ChainSyncConfig,
-  FacilitatorConfig,
+  SyncConfig,
+  Facilitator,
   PaginationStrategy,
   QueryProvider,
   TransferEventData
 } from "@/trigger/types";
 
 function buildQuery(
-  config: ChainSyncConfig,
-  facilitator: FacilitatorConfig,
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
 ): string {
@@ -44,7 +44,7 @@ ORDER BY l.block_timestamp DESC
 LIMIT ${config.limit}`;
 }
 
-function transformResponse(data: any[], config: ChainSyncConfig): TransferEventData[] {
+function transformResponse(data: any[], config: SyncConfig): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -60,7 +60,7 @@ function transformResponse(data: any[], config: ChainSyncConfig): TransferEventD
   }));
 }
 
-export const polygonBigQueryConfig: ChainSyncConfig = {
+export const polygonBigQueryConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: 300,
   chain: "polygon",

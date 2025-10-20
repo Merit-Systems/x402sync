@@ -1,12 +1,12 @@
 import { 
-  ChainSyncConfig, 
+  SyncConfig, 
   PaginationStrategy, 
   QueryProvider, 
 } from "@/trigger/types";
 import { buildQuery, transformResponse } from "./query";
 import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_SOLANA_TOKEN } from "@/trigger/constants";
 
-export const solanaBigQueryConfig: ChainSyncConfig = {
+export const solanaBigQueryConfig: SyncConfig = {
   cron: "*/30 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 5,
   chain: "solana",
