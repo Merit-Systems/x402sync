@@ -63,4 +63,11 @@ export interface FacilitatorConfig {
   syncStartDate: Date;
   enabled: boolean;
   address: string;
+  token: Token;
+}
+
+export interface Token {
+  address: string;
+  decimals: number;
+  symbol: string;
 }

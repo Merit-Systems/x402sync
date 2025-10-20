@@ -34,7 +34,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
             ? mostRecentTransfer[0].block_timestamp 
             : facilitator.syncStartDate;
 
-          logger.log(`[${config.chain}] Syncing ${facilitator} from ${since.toISOString()} to ${now.toISOString()}`);
+          logger.log(`[${config.chain}] Syncing ${facilitator.id} from ${since.toISOString()} to ${now.toISOString()}`);
 
           let totalSaved = 0;
 
@@ -50,7 +50,7 @@ export function createChainSyncTask(config: ChainSyncConfig) {
             }
           );
 
-          logger.log(`[${config.chain}] Completed ${facilitator}: ${totalFetched} fetched, ${totalSaved} saved`);
+          logger.log(`[${config.chain}] Completed ${facilitator.id}: ${totalFetched} fetched, ${totalSaved} saved`);
         }
       } catch (error) {
         logger.error(`[${config.chain}] Error syncing transfers:`, { error: String(error) });

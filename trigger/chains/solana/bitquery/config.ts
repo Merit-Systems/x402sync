@@ -1,4 +1,4 @@
-import { USDC_MULTIPLIER } from "@/trigger/constants";
+import { USDC_MULTIPLIER, USDC_SOLANA_TOKEN } from "@/trigger/constants";
 import { ChainSyncConfig, FacilitatorConfig, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
 
 function buildQuery(
@@ -77,7 +77,8 @@ export const solanaChainConfig: ChainSyncConfig = {
         id: "payAI",
         syncStartDate: new Date('2025-04-01'),
         enabled: false,
-        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+        token: USDC_SOLANA_TOKEN,
     }
   ],
   buildQuery,

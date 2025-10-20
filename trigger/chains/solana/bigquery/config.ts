@@ -4,7 +4,7 @@ import {
   QueryProvider, 
 } from "@/trigger/types";
 import { buildQuery, transformResponse } from "./query";
-import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS } from "@/trigger/constants";
+import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_SOLANA_TOKEN } from "@/trigger/constants";
 
 export const solanaBigQueryConfig: ChainSyncConfig = {
   cron: "*/30 * * * *",
@@ -19,7 +19,8 @@ export const solanaBigQueryConfig: ChainSyncConfig = {
         id: "payAI",
         syncStartDate: new Date('2025-07-01'),
         enabled: true,
-        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4"
+        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
+        token: USDC_SOLANA_TOKEN,
     }
   ],
   buildQuery,
