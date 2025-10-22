@@ -24,7 +24,7 @@ export const solanaBigQueryConfig: SyncConfig = {
     },
     {
       id: "corbits",
-      syncStartDate: new Date('2025-10-10'),
+      syncStartDate: new Date('2025-9-21'),
       enabled: true,
       address: "AepWpq3GQwL8CeKMtZyKtKPa7W91Coygh3ropAJapVdU",
       token: USDC_SOLANA_TOKEN,
