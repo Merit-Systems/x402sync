@@ -21,6 +21,13 @@ export const solanaBigQueryConfig: SyncConfig = {
         enabled: true,
         address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
         token: USDC_SOLANA_TOKEN,
+    },
+    {
+      id: "corbits",
+      syncStartDate: new Date('2025-9-21'),
+      enabled: true,
+      address: "AepWpq3GQwL8CeKMtZyKtKPa7W91Coygh3ropAJapVdU",
+      token: USDC_SOLANA_TOKEN,
     }
   ],
   buildQuery,
