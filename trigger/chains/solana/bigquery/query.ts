@@ -2,7 +2,6 @@ import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
 import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 import { getAccount } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
-import { logger } from "@trigger.dev/sdk/v3";
 import Bottleneck from "bottleneck";
 
 export function buildQuery(
@@ -10,7 +9,6 @@ export function buildQuery(
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  offset?: number
 ): string {
     return `
         DECLARE signer_pubkeys ARRAY<STRING> DEFAULT [
@@ -101,10 +99,8 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
         const getOwner = async (tokenAccount: PublicKey): Promise<string> => {
           const key = tokenAccount.toBase58();
           if (ownerCache.has(key)) {
-            logger.log(`[${config.chain}] Cache hit for ${key}`);
             return ownerCache.get(key)!;
           }
-          logger.log(`[${config.chain}] Cache miss, fetching ${key}`);
           const accountInfo = await getAccount(connection, tokenAccount);
           const owner = accountInfo.owner.toBase58();
           ownerCache.set(key, owner);
@@ -134,4 +130,3 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
 
   return results;
 }
-
