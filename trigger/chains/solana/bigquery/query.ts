@@ -76,6 +76,8 @@ export function buildQuery(
 
 export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
   const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
+  
+  const ownerCache = new Map<string, string>();
 
   const limiter = new Bottleneck({
     reservoir: 2,
@@ -91,18 +93,27 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
         const senderTokenAccount = new PublicKey(row.sender);
         const recipientTokenAccount = new PublicKey(row.recipient);
 
-        // Fetch sequentially instead of parallel to respect rate limit
-        const senderAccountInfo = await getAccount(connection, senderTokenAccount);
-        const recipientAccountInfo = await getAccount(connection, recipientTokenAccount);
+        const getOwner = async (tokenAccount: PublicKey): Promise<string> => {
+          const key = tokenAccount.toBase58();
+          if (ownerCache.has(key)) {
+            logger.log(`[${config.chain}] Cache hit for ${key}`);
+            return ownerCache.get(key)!;
+          }
+          logger.log(`[${config.chain}] Cache miss, fetching ${key}`);
+          const accountInfo = await getAccount(connection, tokenAccount);
+          const owner = accountInfo.owner.toBase58();
+          ownerCache.set(key, owner);
+          return owner;
+        };
 
-        logger.log(`[${config.chain}] Sender owner: ${senderAccountInfo.owner.toBase58()}`);
-        logger.log(`[${config.chain}] Recipient owner: ${recipientAccountInfo.owner.toBase58()}`);
+        const senderOwner = await getOwner(senderTokenAccount);
+        const recipientOwner = await getOwner(recipientTokenAccount);
 
         return {
           address: row.address,
           transaction_from: row.transaction_from,
-          sender: senderAccountInfo.owner.toBase58(),
-          recipient: recipientAccountInfo.owner.toBase58(),
+          sender: senderOwner,
+          recipient: recipientOwner,
           amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
           block_timestamp: new Date(row.block_timestamp.value),
           tx_hash: row.tx_hash,
