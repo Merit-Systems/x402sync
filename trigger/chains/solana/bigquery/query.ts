@@ -78,10 +78,11 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
   const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
 
   const limiter = new Bottleneck({
-    reservoir: 5,
-    reservoirRefreshAmount: 5,
-    reservoirRefreshInterval: 1000, // 1 second
-    maxConcurrent: 5
+    reservoir: 2,              // Only 2 requests per interval
+    reservoirRefreshAmount: 2, // Refresh 2 more
+    reservoirRefreshInterval: 1000, // Every 1 second
+    minTime: 500,              // Minimum 500ms between each request
+    maxConcurrent: 1
   });
 
   const results = await Promise.all(
@@ -90,18 +91,12 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
         const senderTokenAccount = new PublicKey(row.sender);
         const recipientTokenAccount = new PublicKey(row.recipient);
 
-        const [senderAccountInfo, recipientAccountInfo] = await Promise.all([
-          getAccount(connection, senderTokenAccount),
-          getAccount(connection, recipientTokenAccount),
-        ]);
+        // Fetch sequentially instead of parallel to respect rate limit
+        const senderAccountInfo = await getAccount(connection, senderTokenAccount);
+        const recipientAccountInfo = await getAccount(connection, recipientTokenAccount);
 
-        logger.log(`[${config.chain}] Sender account info: ${JSON.stringify(senderAccountInfo, (key, value) =>
-            typeof value === 'bigint' ? value.toString() : value
-        )}`);
-
-        logger.log(`[${config.chain}] Recipient account info: ${JSON.stringify(recipientAccountInfo, (key, value) =>
-            typeof value === 'bigint' ? value.toString() : value
-        )}`);
+        logger.log(`[${config.chain}] Sender owner: ${senderAccountInfo.owner.toBase58()}`);
+        logger.log(`[${config.chain}] Recipient owner: ${recipientAccountInfo.owner.toBase58()}`);
 
         return {
           address: row.address,
