@@ -2,6 +2,8 @@ import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
 import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
 import { getAccount } from "@solana/spl-token";
 import { Connection, PublicKey } from "@solana/web3.js";
+import { logger } from "@trigger.dev/sdk/v3";
+import Bottleneck from "bottleneck";
 
 export function buildQuery(
   config: SyncConfig,
@@ -75,15 +77,31 @@ export function buildQuery(
 export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
   const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
 
+  const limiter = new Bottleneck({
+    reservoir: 5,
+    reservoirRefreshAmount: 5,
+    reservoirRefreshInterval: 1000, // 1 second
+    maxConcurrent: 5
+  });
+
   const results = await Promise.all(
-    data.map(async (row: any) => {
+    data.map((row: any) => 
+      limiter.schedule(async () => {
         const senderTokenAccount = new PublicKey(row.sender);
         const recipientTokenAccount = new PublicKey(row.recipient);
 
         const [senderAccountInfo, recipientAccountInfo] = await Promise.all([
-            getAccount(connection, senderTokenAccount),
-            getAccount(connection, recipientTokenAccount),
+          getAccount(connection, senderTokenAccount),
+          getAccount(connection, recipientTokenAccount),
         ]);
+
+        logger.log(`[${config.chain}] Sender account info: ${JSON.stringify(senderAccountInfo, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value
+        )}`);
+
+        logger.log(`[${config.chain}] Recipient account info: ${JSON.stringify(recipientAccountInfo, (key, value) =>
+            typeof value === 'bigint' ? value.toString() : value
+        )}`);
 
         return {
           address: row.address,
@@ -98,9 +116,10 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
           decimals: facilitator.token.decimals,
           facilitator_id: facilitator.id,
           log_index: row.transfer_index,
-        }
-    }),
-  )
+        };
+      })
+    )
+  );
 
   return results;
 }
