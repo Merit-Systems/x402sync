@@ -78,10 +78,10 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
   const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
 
   const limiter = new Bottleneck({
-    reservoir: 2,              // Only 2 requests per interval
-    reservoirRefreshAmount: 2, // Refresh 2 more
-    reservoirRefreshInterval: 1000, // Every 1 second
-    minTime: 500,              // Minimum 500ms between each request
+    reservoir: 2,
+    reservoirRefreshAmount: 2,
+    reservoirRefreshInterval: 1000,
+    minTime: 500,
     maxConcurrent: 1
   });
 
