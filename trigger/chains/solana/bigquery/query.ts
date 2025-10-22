@@ -1,5 +1,7 @@
 import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
-import { USDC_DECIMALS, USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
+import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
+import { getAccount } from "@solana/spl-token";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 export function buildQuery(
   config: SyncConfig,
@@ -70,20 +72,36 @@ export function buildQuery(
         LIMIT ${config.limit}`;
 }
 
-export function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
-  return data.map((row: any) => ({
-    address: row.address,
-    transaction_from: row.transaction_from,
-    sender: row.sender,
-    recipient: row.recipient,
-    amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
-    block_timestamp: new Date(row.block_timestamp.value), // BigQuery returns timestamp objects
-    tx_hash: row.tx_hash,
-    chain: row.chain,
-    provider: config.provider,
-    decimals: facilitator.token.decimals,
-    facilitator_id: facilitator.id,
-    log_index: row.transfer_index,
-  }));
+export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
+  const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
+
+  const results = await Promise.all(
+    data.map(async (row: any) => {
+        const senderTokenAccount = new PublicKey(row.sender);
+        const recipientTokenAccount = new PublicKey(row.recipient);
+
+        const [senderAccountInfo, recipientAccountInfo] = await Promise.all([
+            getAccount(connection, senderTokenAccount),
+            getAccount(connection, recipientTokenAccount),
+        ]);
+
+        return {
+          address: row.address,
+          transaction_from: row.transaction_from,
+          sender: senderAccountInfo.owner.toBase58(),
+          recipient: recipientAccountInfo.owner.toBase58(),
+          amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
+          block_timestamp: new Date(row.block_timestamp.value),
+          tx_hash: row.tx_hash,
+          chain: row.chain,
+          provider: config.provider,
+          decimals: facilitator.token.decimals,
+          facilitator_id: facilitator.id,
+          log_index: row.transfer_index,
+        }
+    }),
+  )
+
+  return results;
 }
 

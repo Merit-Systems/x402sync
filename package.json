@@ -23,6 +23,8 @@
     "@neondatabase/serverless": "^1.0.2",
     "@prisma/adapter-neon": "^6.17.1",
     "@prisma/client": "6.17.1",
+    "@solana/spl-token": "^0.4.14",
+    "@solana/web3.js": "^1.98.4",
     "@trigger.dev/sdk": "4.0.4",
     "ws": "^8.18.3"
   },

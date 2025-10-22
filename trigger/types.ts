@@ -30,7 +30,7 @@ interface BaseQueryConfig {
   provider: QueryProvider;
   apiUrl?: string;
   buildQuery: (config: SyncConfig, facilitator: Facilitator, since: Date, now: Date, offset?: number) => string;
-  transformResponse: (data: any, config: SyncConfig, facilitator: Facilitator) => TransferEventData[];
+  transformResponse: (data: any, config: SyncConfig, facilitator: Facilitator) => TransferEventData[] | Promise<TransferEventData[]>;
 }
 
 interface TimeWindowQueryConfig extends BaseQueryConfig {
