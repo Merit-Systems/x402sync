@@ -74,6 +74,11 @@ export function buildQuery(
         LIMIT ${config.limit}`;
 }
 
+/**
+ * NOTE(shafu + json): This is a very temporary solution! very bad and does not scale!
+ * Has to be replaces asap but we wanted to shipy shipy.
+ * Great Tech.
+ */
 export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
   const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
   
