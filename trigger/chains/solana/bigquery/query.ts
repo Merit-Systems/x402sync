@@ -93,22 +93,8 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
   const results = await Promise.all(
     data.map((row: any) => 
       limiter.schedule(async () => {
-        const senderTokenAccount = new PublicKey(row.sender);
-        const recipientTokenAccount = new PublicKey(row.recipient);
-
-        const getOwner = async (tokenAccount: PublicKey): Promise<string> => {
-          const key = tokenAccount.toBase58();
-          if (ownerCache.has(key)) {
-            return ownerCache.get(key)!;
-          }
-          const accountInfo = await getAccount(connection, tokenAccount);
-          const owner = accountInfo.owner.toBase58();
-          ownerCache.set(key, owner);
-          return owner;
-        };
-
-        const senderOwner = await getOwner(senderTokenAccount);
-        const recipientOwner = await getOwner(recipientTokenAccount);
+        const senderOwner = await getOwner(row.sender, connection, ownerCache);
+        const recipientOwner = await getOwner(row.recipient, connection, ownerCache);
 
         return {
           address: row.address,
@@ -129,4 +115,16 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
   );
 
   return results;
+}
+
+async function getOwner(address: string, connection: Connection, cache: Map<string, string>): Promise<string> {
+    const addressTokenAccount = new PublicKey(address);
+    const key = addressTokenAccount.toBase58();
+    if (cache.has(key)) {
+        return cache.get(key)!;
+    }
+    const accountInfo = await getAccount(connection, addressTokenAccount);
+    const owner = accountInfo.owner.toBase58();
+    cache.set(key, owner);
+    return owner;
 }
