@@ -1,12 +1,14 @@
 import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
-import { USDC_DECIMALS, USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
+import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
+import { getAccount } from "@solana/spl-token";
+import { Connection, PublicKey } from "@solana/web3.js";
+import Bottleneck from "bottleneck";
 
 export function buildQuery(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  offset?: number
 ): string {
     return `
         DECLARE signer_pubkeys ARRAY<STRING> DEFAULT [
@@ -70,20 +72,61 @@ export function buildQuery(
         LIMIT ${config.limit}`;
 }
 
-export function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
-  return data.map((row: any) => ({
-    address: row.address,
-    transaction_from: row.transaction_from,
-    sender: row.sender,
-    recipient: row.recipient,
-    amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
-    block_timestamp: new Date(row.block_timestamp.value), // BigQuery returns timestamp objects
-    tx_hash: row.tx_hash,
-    chain: row.chain,
-    provider: config.provider,
-    decimals: facilitator.token.decimals,
-    facilitator_id: facilitator.id,
-    log_index: row.transfer_index,
-  }));
-}
+/**
+ * NOTE(shafu + json): This is a very temporary solution! very bad and does not scale!
+ * Has to be replaces asap but we wanted to shipy shipy.
+ * Great Tech.
+ */
+export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
+  const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
+  
+  const ownerCache = new Map<string, string>();
 
+  const limiter = new Bottleneck({
+    reservoir: 2,
+    reservoirRefreshAmount: 2,
+    reservoirRefreshInterval: 1000,
+    minTime: 500,
+    maxConcurrent: 1
+  });
+
+  const results = await Promise.all(
+    data.map((row: any) => 
+      limiter.schedule(async () => {
+        const senderTokenAccount = new PublicKey(row.sender);
+        const recipientTokenAccount = new PublicKey(row.recipient);
+
+        const getOwner = async (tokenAccount: PublicKey): Promise<string> => {
+          const key = tokenAccount.toBase58();
+          if (ownerCache.has(key)) {
+            return ownerCache.get(key)!;
+          }
+          const accountInfo = await getAccount(connection, tokenAccount);
+          const owner = accountInfo.owner.toBase58();
+          ownerCache.set(key, owner);
+          return owner;
+        };
+
+        const senderOwner = await getOwner(senderTokenAccount);
+        const recipientOwner = await getOwner(recipientTokenAccount);
+
+        return {
+          address: row.address,
+          transaction_from: row.transaction_from,
+          sender: senderOwner,
+          recipient: recipientOwner,
+          amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
+          block_timestamp: new Date(row.block_timestamp.value),
+          tx_hash: row.tx_hash,
+          chain: row.chain,
+          provider: config.provider,
+          decimals: facilitator.token.decimals,
+          facilitator_id: facilitator.id,
+          log_index: row.transfer_index,
+        };
+      })
+    )
+  );
+
+  return results;
+}

@@ -8,7 +8,7 @@ import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_SOLANA_TOKEN } from "@/trigg
 
 export const solanaBigQueryConfig: SyncConfig = {
   cron: "0 0 * * *",
-  maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 5,
+  maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: "solana",
   provider: QueryProvider.BIGQUERY,
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
