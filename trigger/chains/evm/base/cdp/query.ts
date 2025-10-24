@@ -1,4 +1,9 @@
-import { SyncConfig, Facilitator, TransferEventData } from '@/trigger/types';
+import {
+  SyncConfig,
+  Facilitator,
+  TransferEventData,
+  CdpTransferRow,
+} from '@/trigger/types';
 import { TRANSFER_EVENT_SIG } from '@/trigger/constants';
 
 export function buildQuery(
@@ -34,11 +39,11 @@ export function buildQuery(
 }
 
 export function transformResponse(
-  data: any[],
+  data: unknown,
   config: SyncConfig,
   facilitator: Facilitator
 ): TransferEventData[] {
-  return data.map((row: any) => ({
+  return (data as CdpTransferRow[]).map(row => ({
     address: row.contract_address,
     transaction_from: row.transaction_from,
     sender: row.sender,

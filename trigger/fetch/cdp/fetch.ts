@@ -1,4 +1,4 @@
-import { SyncConfig, Facilitator } from '@/trigger/types';
+import { SyncConfig, Facilitator, TransferEventData } from '@/trigger/types';
 import { runCdpSqlQuery } from './helpers';
 import { logger } from '@trigger.dev/sdk/v3';
 
@@ -7,7 +7,7 @@ export async function fetchCDP(
   facilitator: Facilitator,
   since: Date,
   now: Date
-): Promise<any[]> {
+): Promise<TransferEventData[]> {
   logger.log(
     `[${config.chain}] Fetching CDP data from ${since.toISOString()} to ${now.toISOString()}`
   );

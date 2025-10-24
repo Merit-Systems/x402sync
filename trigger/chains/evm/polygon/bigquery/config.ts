@@ -11,6 +11,7 @@ import {
   QueryProvider,
   TransferEventData,
   Chain,
+  BigQueryTransferRow,
 } from '@/trigger/types';
 
 function buildQuery(
@@ -51,16 +52,16 @@ LIMIT ${config.limit}`;
 }
 
 function transformResponse(
-  data: any[],
+  data: unknown,
   config: SyncConfig
 ): TransferEventData[] {
-  return data.map((row: any) => ({
+  return (data as BigQueryTransferRow[]).map(row => ({
     address: row.address,
     transaction_from: row.transaction_from,
     sender: row.sender,
     recipient: row.recipient,
     amount: Math.round(parseFloat(row.amount) * USDC_MULTIPLIER),
-    block_timestamp: new Date(row.block_timestamp.value), // BigQuery returns timestamp objects
+    block_timestamp: new Date(row.block_timestamp.value),
     tx_hash: row.tx_hash,
     chain: row.chain,
     provider: config.provider,

@@ -37,7 +37,7 @@ interface BaseQueryConfig {
     offset?: number
   ) => string;
   transformResponse: (
-    data: any,
+    data: unknown,
     config: SyncConfig,
     facilitator: Facilitator
   ) => TransferEventData[] | Promise<TransferEventData[]>;
@@ -89,4 +89,61 @@ export interface Token {
   address: string;
   decimals: number;
   symbol: string;
+}
+
+export interface CdpTransferRow {
+  contract_address: string;
+  sender: string;
+  transaction_from: string;
+  to_address: string;
+  transaction_hash: string;
+  block_timestamp: string;
+  amount: string;
+  log_index: number;
+}
+
+export interface BigQueryTransferRow {
+  address: string;
+  transaction_from: string;
+  sender: string;
+  recipient: string;
+  amount: string;
+  block_timestamp: { value: string };
+  tx_hash: string;
+  chain: string;
+  facilitator_id: string;
+  transfer_index?: number;
+}
+
+export interface BitQueryTransferRow {
+  block: {
+    timestamp: { time: string };
+    height: number;
+  };
+  sender: { address: string };
+  receiver: { address: string };
+  amount: string;
+  currency: { address: string };
+  transaction: { feePayer: string; signature: string };
+}
+
+export interface BitQueryTransferRowStream {
+  Transfer: {
+    Amount: string;
+    Sender: string;
+    Receiver: string;
+    Currency: {
+      Name: string;
+      SmartContract: string;
+      Symbol: string;
+    };
+  };
+  Block: {
+    Time: string;
+    Number: number;
+  };
+  Transaction: {
+    Hash: string;
+    From: string;
+  };
 }

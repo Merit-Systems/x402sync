@@ -1,12 +1,12 @@
 import { logger } from '@trigger.dev/sdk/v3';
-import { SyncConfig, Facilitator } from '../../types';
+import { SyncConfig, Facilitator, TransferEventData } from '../../types';
 
 export async function fetchWithOffsetPagination(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
   now: Date
-): Promise<any[]> {
+): Promise<TransferEventData[]> {
   const allTransfers = [];
   let offset = 0;
   let hasMore = true;
@@ -34,7 +34,7 @@ export async function fetchBitquery(
   facilitator: Facilitator,
   since: Date,
   now: Date
-): Promise<any[]> {
+): Promise<TransferEventData[]> {
   logger.log(
     `[${config.chain}] Fetching Bitquery data from ${since.toISOString()} to ${now.toISOString()}`
   );
@@ -47,7 +47,7 @@ async function executeBitqueryRequest(
   config: SyncConfig,
   facilitator: Facilitator,
   query: string
-): Promise<any[]> {
+): Promise<TransferEventData[]> {
   const headers = new Headers();
   headers.append('Content-Type', 'application/json');
   headers.append('Authorization', `Bearer ${process.env.BITQUERY_API_KEY}`);
