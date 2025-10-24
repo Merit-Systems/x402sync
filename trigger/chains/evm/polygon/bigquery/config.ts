@@ -1,10 +1,12 @@
+import { FACILITATORS } from "@/trigger/config";
 import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
 import {
   SyncConfig,
   Facilitator,
   PaginationStrategy,
   QueryProvider,
-  TransferEventData
+  TransferEventData,
+  Chain
 } from "@/trigger/types";
 
 function buildQuery(
@@ -69,19 +71,7 @@ export const polygonBigQueryConfig: SyncConfig = {
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
   timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
   limit: 20_000,
-  facilitators: [
-    {
-        id: "x402rs",
-        enabled: false,
-        syncStartDate: new Date('2025-04-01'),
-        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec",
-        token: {
-          address: USDC_POLYGON,
-          decimals: USDC_DECIMALS,
-          symbol: "USDC",
-        }
-    },
-  ],
+  facilitators: FACILITATORS.filter(f => f.chain === Chain.POLYGON),
   buildQuery,
   transformResponse,
 };

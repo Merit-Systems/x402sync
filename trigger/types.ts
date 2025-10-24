@@ -60,12 +60,19 @@ export interface EvmChainConfig {
     facilitators: Facilitator[];
 }
 
+export enum Chain {
+  BASE = "base",
+  POLYGON = "polygon",
+  SOLANA = "solana",
+}
+
 export interface Facilitator {
   id: string;
   syncStartDate: Date;
   enabled: boolean;
   address: string;
   token: Token;
+  chain: string;
 }
 
 export interface Token {
