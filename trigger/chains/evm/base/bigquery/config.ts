@@ -34,6 +34,13 @@ export const baseChainConfig = createEvmChainConfig({
         enabled: true,
         address: "0x80c08de1a05df2bd633cf520754e40fde3c794d3",
         token: USDC_BASE_TOKEN,
+    },
+    {
+        id: "mogami",
+        enabled: true,
+        syncStartDate: new Date('2025-10-24'),
+        address: "0xfe0920a0a7f0f8a1ec689146c30c3bbef439bf8a",
+        token: USDC_BASE_TOKEN,
     }
   ],
 });
