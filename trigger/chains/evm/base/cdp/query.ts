@@ -1,4 +1,9 @@
-import { SyncConfig, Facilitator, TransferEventData, CdpTransferRow } from '@/trigger/types';
+import {
+  SyncConfig,
+  Facilitator,
+  TransferEventData,
+  CdpTransferRow,
+} from '@/trigger/types';
 import { TRANSFER_EVENT_SIG } from '@/trigger/constants';
 
 export function buildQuery(

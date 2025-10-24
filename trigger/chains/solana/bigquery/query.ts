@@ -1,4 +1,9 @@
-import { SyncConfig, Facilitator, TransferEventData, BigQueryTransferRow } from '@/trigger/types';
+import {
+  SyncConfig,
+  Facilitator,
+  TransferEventData,
+  BigQueryTransferRow,
+} from '@/trigger/types';
 import { USDC_MULTIPLIER, USDC_SOLANA } from '@/trigger/constants';
 import { getAccount } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';

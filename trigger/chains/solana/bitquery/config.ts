@@ -59,7 +59,11 @@ function buildQuery(
   `;
 }
 
-function transformResponse(data: unknown, config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
+function transformResponse(
+  data: unknown,
+  config: SyncConfig,
+  facilitator: Facilitator
+): TransferEventData[] {
   return (data as BitQueryTransferRow[]).map(transfer => ({
     address: transfer.currency.address,
     transaction_from: transfer.transaction.feePayer,
