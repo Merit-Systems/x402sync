@@ -1,4 +1,4 @@
-import { SyncConfig, Facilitator, TransferEventData } from '@/trigger/types';
+import { SyncConfig, Facilitator, TransferEventData, BigQueryTransferRow } from '@/trigger/types';
 import { USDC_MULTIPLIER, USDC_SOLANA } from '@/trigger/constants';
 import { getAccount } from '@solana/spl-token';
 import { Connection, PublicKey } from '@solana/web3.js';
@@ -78,7 +78,7 @@ export function buildQuery(
  * Great Tech.
  */
 export async function transformResponse(
-  data: any[],
+  data: unknown,
   config: SyncConfig,
   facilitator: Facilitator
 ): Promise<TransferEventData[]> {
@@ -97,7 +97,7 @@ export async function transformResponse(
   });
 
   const results = await Promise.all(
-    data.map((row: any) =>
+    (data as BigQueryTransferRow[]).map(row =>
       limiter.schedule(async () => {
         const senderOwner = await getOwner(row.sender, connection, ownerCache);
         const recipientOwner = await getOwner(
