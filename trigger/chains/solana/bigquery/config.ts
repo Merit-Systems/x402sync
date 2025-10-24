@@ -1,17 +1,17 @@
-import { 
-  SyncConfig, 
-  PaginationStrategy, 
+import {
+  SyncConfig,
+  PaginationStrategy,
   QueryProvider,
-  Chain, 
-} from "@/trigger/types";
-import { buildQuery, transformResponse } from "./query";
-import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS, USDC_SOLANA_TOKEN } from "@/trigger/constants";
-import { FACILITATORS } from "@/trigger/config";
+  Chain,
+} from '@/trigger/types';
+import { buildQuery, transformResponse } from './query';
+import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS } from '@/trigger/constants';
+import { FACILITATORS } from '@/trigger/config';
 
 export const solanaBigQueryConfig: SyncConfig = {
-  cron: "0 0 * * *",
+  cron: '0 0 * * *',
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
-  chain: "solana",
+  chain: 'solana',
   provider: QueryProvider.BIGQUERY,
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
   timeWindowInMs: ONE_DAY_IN_MS * 30,

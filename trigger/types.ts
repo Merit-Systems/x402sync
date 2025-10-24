@@ -20,17 +20,27 @@ export enum PaginationStrategy {
 }
 
 export enum QueryProvider {
-    BITQUERY = 'bitquery',
-    BIGQUERY = 'bigquery',
-    CDP = 'cdp',
+  BITQUERY = 'bitquery',
+  BIGQUERY = 'bigquery',
+  CDP = 'cdp',
 }
 
 interface BaseQueryConfig {
   chain: string;
   provider: QueryProvider;
   apiUrl?: string;
-  buildQuery: (config: SyncConfig, facilitator: Facilitator, since: Date, now: Date, offset?: number) => string;
-  transformResponse: (data: any, config: SyncConfig, facilitator: Facilitator) => TransferEventData[] | Promise<TransferEventData[]>;
+  buildQuery: (
+    config: SyncConfig,
+    facilitator: Facilitator,
+    since: Date,
+    now: Date,
+    offset?: number
+  ) => string;
+  transformResponse: (
+    data: any,
+    config: SyncConfig,
+    facilitator: Facilitator
+  ) => TransferEventData[] | Promise<TransferEventData[]>;
 }
 
 interface TimeWindowQueryConfig extends BaseQueryConfig {
@@ -50,20 +60,20 @@ export type SyncConfig = QueryConfig & {
   maxDurationInSeconds: number;
   facilitators: Facilitator[];
   limit: number;
-}
+};
 
 export interface EvmChainConfig {
-    cron: string;
-    maxDuration: number;
-    network: string;
-    chain: string;
-    facilitators: Facilitator[];
+  cron: string;
+  maxDuration: number;
+  network: string;
+  chain: string;
+  facilitators: Facilitator[];
 }
 
 export enum Chain {
-  BASE = "base",
-  POLYGON = "polygon",
-  SOLANA = "solana",
+  BASE = 'base',
+  POLYGON = 'polygon',
+  SOLANA = 'solana',
 }
 
 export interface Facilitator {

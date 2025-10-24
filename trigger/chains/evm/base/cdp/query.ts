@@ -1,11 +1,11 @@
-import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
-import { TRANSFER_EVENT_SIG } from "@/trigger/constants";
+import { SyncConfig, Facilitator, TransferEventData } from '@/trigger/types';
+import { TRANSFER_EVENT_SIG } from '@/trigger/constants';
 
 export function buildQuery(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
-  now: Date,
+  now: Date
 ): string {
   // Format dates for CDP SQL: YYYY-MM-DD HH:MM:SS.mmm
   const formatDateForSql = (date: Date) => {
@@ -33,7 +33,11 @@ export function buildQuery(
   `;
 }
 
-export function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
+export function transformResponse(
+  data: any[],
+  config: SyncConfig,
+  facilitator: Facilitator
+): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.contract_address,
     transaction_from: row.transaction_from,
@@ -49,4 +53,3 @@ export function transformResponse(data: any[], config: SyncConfig, facilitator: 
     facilitator_id: facilitator.id,
   }));
 }
-

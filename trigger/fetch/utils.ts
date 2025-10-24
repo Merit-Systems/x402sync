@@ -1,12 +1,11 @@
-import { logger } from "@trigger.dev/sdk/v3";
-import { QueryConfig } from "../types";
+import { logger } from '@trigger.dev/sdk/v3';
+import { Facilitator, SyncConfig } from '../types';
 
 export async function fetchWithTimeWindowing(
-  config: QueryConfig,
-  facilitators: string[],
+  config: SyncConfig,
+  facilitator: Facilitator,
   since: Date,
   now: Date,
-  limit: number,
   executeQuery: (query: string) => Promise<any[]>
 ): Promise<any[]> {
   const allTransfers = [];
@@ -14,18 +13,31 @@ export async function fetchWithTimeWindowing(
   const timeWindowMs = config.timeWindowInMs!;
 
   while (currentStart < now) {
-    const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));
-    
-    logger.log(`[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
+    const currentEnd = new Date(
+      Math.min(currentStart.getTime() + timeWindowMs, now.getTime())
+    );
 
-    const query = config.buildQuery(config, facilitators, currentStart, currentEnd, limit);
+    logger.log(
+      `[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`
+    );
+
+    const query = config.buildQuery(
+      config,
+      facilitator,
+      currentStart,
+      currentEnd
+    );
     const results = await executeQuery(query);
 
     allTransfers.push(...results);
-    logger.log(`[${config.chain}] Fetched ${results.length} results in this time window`);
+    logger.log(
+      `[${config.chain}] Fetched ${results.length} results in this time window`
+    );
 
-    if (results.length >= limit) {
-      logger.warn(`[${config.chain}] Window returned ${results.length} results (at or above limit of ${limit}). Some data might be missing. Consider reducing TIME_WINDOW_DAYS or increasing the limit.`);
+    if (results.length >= config.limit) {
+      logger.warn(
+        `[${config.chain}] Window returned ${results.length} results (at or above limit of ${config.limit}). Some data might be missing. Consider reducing TIME_WINDOW_DAYS or increasing the limit.`
+      );
     }
 
     currentStart = currentEnd;
@@ -33,4 +45,3 @@ export async function fetchWithTimeWindowing(
 
   return allTransfers;
 }
-

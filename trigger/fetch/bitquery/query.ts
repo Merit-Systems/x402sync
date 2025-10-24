@@ -1,11 +1,18 @@
-import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from "@/trigger/constants";
-import { SyncConfig, EvmChainConfig, Facilitator, PaginationStrategy, QueryProvider, TransferEventData } from "@/trigger/types";
+import { DEFAULT_CONTRACT_ADDRESS, USDC_MULTIPLIER } from '@/trigger/constants';
+import {
+  SyncConfig,
+  EvmChainConfig,
+  Facilitator,
+  PaginationStrategy,
+  QueryProvider,
+  TransferEventData,
+} from '@/trigger/types';
 
 export function buildQuery(
-    config: SyncConfig,
-    facilitator: Facilitator,
-    since: Date,
-    now: Date,
+  config: SyncConfig,
+  facilitator: Facilitator,
+  since: Date,
+  now: Date
 ): string {
   return `
     {
@@ -47,7 +54,10 @@ export function buildQuery(
   `;
 }
 
-export function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
+export function transformResponse(
+  data: any,
+  config: SyncConfig
+): TransferEventData[] {
   return data.EVM.Transfers.map((item: any) => ({
     address: item.Transfer.Currency?.SmartContract || DEFAULT_CONTRACT_ADDRESS,
     transaction_from: item.Transaction.From,
@@ -62,15 +72,15 @@ export function transformResponse(data: any, config: SyncConfig): TransferEventD
 }
 
 export function createEvmChainConfig(params: EvmChainConfig): SyncConfig {
-    return {
-        ...params,
-        apiUrl: "https://streaming.bitquery.io/graphql",
-        paginationStrategy: PaginationStrategy.TIME_WINDOW,
-        provider: QueryProvider.BITQUERY,
-        timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
-        buildQuery,
-        transformResponse,
-        maxDurationInSeconds: 300,
-        limit: 20_000,
-    }
+  return {
+    ...params,
+    apiUrl: 'https://streaming.bitquery.io/graphql',
+    paginationStrategy: PaginationStrategy.TIME_WINDOW,
+    provider: QueryProvider.BITQUERY,
+    timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
+    buildQuery,
+    transformResponse,
+    maxDurationInSeconds: 300,
+    limit: 20_000,
+  };
 }
