@@ -7,7 +7,7 @@ import {
 import { buildQuery, transformResponse } from "./query";
 
 export const baseCdpConfig: SyncConfig = {
-  cron: "*/30 * * * *",
+  cron: "*/1 * * * *",
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: "base",
   provider: QueryProvider.CDP,
