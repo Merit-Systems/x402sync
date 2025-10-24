@@ -114,3 +114,15 @@ export interface BigQueryTransferRow {
   facilitator_id: string;
   transfer_index?: number;
 }
+
+export interface BitQueryTransferRow {
+  block: {
+    timestamp: { time: string };
+    height: number;
+  };
+  sender: { address: string };
+  receiver: { address: string };
+  amount: string;
+  currency: { address: string };
+  transaction: { feePayer: string; signature: string };
+}

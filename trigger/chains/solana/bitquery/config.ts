@@ -6,6 +6,7 @@ import {
   QueryProvider,
   TransferEventData,
   Chain,
+  BitQueryTransferRow,
 } from '../../../types';
 import { FACILITATORS } from '@/trigger/config';
 
@@ -58,8 +59,8 @@ function buildQuery(
   `;
 }
 
-function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
-  return data.solana.sent.map((transfer: any) => ({
+function transformResponse(data: unknown, config: SyncConfig, facilitator: Facilitator): TransferEventData[] {
+  return (data as BitQueryTransferRow[]).map(transfer => ({
     address: transfer.currency.address,
     transaction_from: transfer.transaction.feePayer,
     sender: transfer.sender.address,
@@ -69,6 +70,8 @@ function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
     tx_hash: transfer.transaction.signature,
     chain: config.chain,
     provider: config.provider,
+    decimals: facilitator.token.decimals,
+    facilitator_id: facilitator.id,
   }));
 }
 
