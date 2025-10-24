@@ -2,6 +2,7 @@ import {
   USDC_DECIMALS,
   USDC_MULTIPLIER,
   USDC_POLYGON,
+  TRANSFER_TOPIC,
 } from '@/trigger/constants';
 import {
   SyncConfig,
@@ -21,7 +22,7 @@ export function buildQuery(
     "${facilitator.address}"
     ];
     DECLARE usdc_address STRING DEFAULT '${USDC_POLYGON.toLowerCase()}';
-    DECLARE transfer_topic STRING DEFAULT '0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef';
+    DECLARE transfer_topic STRING DEFAULT '${TRANSFER_TOPIC}';
     DECLARE start_ts TIMESTAMP DEFAULT TIMESTAMP('${since.toISOString()}');
     DECLARE end_ts TIMESTAMP DEFAULT TIMESTAMP('${now.toISOString()}');
 
