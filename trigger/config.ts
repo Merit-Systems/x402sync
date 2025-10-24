@@ -1,7 +1,8 @@
 import { USDC_BASE_TOKEN, USDC_DECIMALS, USDC_POLYGON, USDC_SOLANA_TOKEN } from "./constants";
 import { Chain, Facilitator } from "./types";
+import { validateUniqueFacilitators } from "./validate";
 
-export const FACILITATORS: Facilitator[] = [
+const _FACILITATORS = validateUniqueFacilitators([
     {
         id: "coinbase",
         enabled: true,
@@ -69,5 +70,7 @@ export const FACILITATORS: Facilitator[] = [
       address: "AepWpq3GQwL8CeKMtZyKtKPa7W91Coygh3ropAJapVdU",
       token: USDC_SOLANA_TOKEN,
       chain: Chain.SOLANA
-    }
-]
+    },
+] as const);
+
+export const FACILITATORS: Facilitator[] = _FACILITATORS as unknown as Facilitator[];
