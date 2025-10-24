@@ -1,13 +1,13 @@
 import { logger } from '@trigger.dev/sdk/v3';
-import { Facilitator, SyncConfig } from '../types';
+import { Facilitator, SyncConfig, TransferEventData } from '../types';
 
 export async function fetchWithTimeWindowing(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  executeQuery: (query: string) => Promise<any[]>
-): Promise<any[]> {
+  executeQuery: (query: string) => Promise<TransferEventData[]>
+): Promise<TransferEventData[]> {
   const allTransfers = [];
   let currentStart = new Date(since);
   const timeWindowMs = config.timeWindowInMs!;

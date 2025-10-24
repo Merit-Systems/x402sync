@@ -1,13 +1,13 @@
 import { logger } from '@trigger.dev/sdk/v3';
 import { BigQuery } from '@google-cloud/bigquery';
-import { SyncConfig, Facilitator } from '../../types';
+import { SyncConfig, Facilitator, TransferEventData } from '../../types';
 
 export async function fetchBigQuery(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
   now: Date
-): Promise<any[]> {
+): Promise<TransferEventData[]> {
   const bq = new BigQuery({
     credentials: JSON.parse(process.env.GOOGLE_CLOUD_CREDENTIALS!),
   });

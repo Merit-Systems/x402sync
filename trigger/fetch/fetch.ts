@@ -3,6 +3,7 @@ import {
   Facilitator,
   PaginationStrategy,
   QueryProvider,
+  TransferEventData,
 } from '../types';
 import { fetchWithOffsetPagination, fetchBitquery } from './bitquery/fetch';
 import { fetchBigQuery } from './bigquery/fetch';
@@ -14,7 +15,7 @@ export async function fetchTransfers(
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  onBatchFetched?: (batch: any[]) => Promise<void>
+  onBatchFetched?: (batch: TransferEventData[]) => Promise<void>
 ): Promise<{ totalFetched: number }> {
   const strategy = config.paginationStrategy;
 
@@ -34,7 +35,7 @@ async function fetchWithWindow(
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  onBatchFetched?: (batch: any[]) => Promise<void>
+  onBatchFetched?: (batch: TransferEventData[]) => Promise<void>
 ): Promise<{ totalFetched: number }> {
   const provider = config.provider;
   let currentStart = new Date(since);
@@ -50,7 +51,7 @@ async function fetchWithWindow(
       `[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`
     );
 
-    let results: any[] | undefined;
+    let results: TransferEventData[] | undefined;
 
     if (provider === QueryProvider.BIGQUERY) {
       results = await fetchBigQuery(
@@ -102,7 +103,7 @@ async function fetchWithOffset(
   facilitator: Facilitator,
   since: Date,
   now: Date,
-  onBatchFetched?: (batch: any[]) => Promise<void>
+  onBatchFetched?: (batch: TransferEventData[]) => Promise<void>
 ): Promise<{ totalFetched: number }> {
   if (config.provider !== QueryProvider.BITQUERY) {
     throw new Error(
