@@ -1,5 +1,5 @@
-import { prisma } from "./client";
-import { Prisma } from "@/generated/prisma";
+import { prisma } from './client';
+import { Prisma } from '@/generated/prisma';
 
 /**
  * Create a new TransferEvent

@@ -1,17 +1,23 @@
-import { TRANSFER_EVENT_SIG, USDC_DECIMALS, USDC_MULTIPLIER, USDC_POLYGON } from "@/trigger/constants";
+import { FACILITATORS } from '@/trigger/config';
+import {
+  USDC_DECIMALS,
+  USDC_MULTIPLIER,
+  USDC_POLYGON,
+} from '@/trigger/constants';
 import {
   SyncConfig,
   Facilitator,
   PaginationStrategy,
   QueryProvider,
-  TransferEventData
-} from "@/trigger/types";
+  TransferEventData,
+  Chain,
+} from '@/trigger/types';
 
 function buildQuery(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
-  now: Date,
+  now: Date
 ): string {
   return `
 DECLARE facilitator_addresses ARRAY<STRING> DEFAULT [
@@ -44,7 +50,10 @@ ORDER BY l.block_timestamp DESC
 LIMIT ${config.limit}`;
 }
 
-function transformResponse(data: any[], config: SyncConfig): TransferEventData[] {
+function transformResponse(
+  data: any[],
+  config: SyncConfig
+): TransferEventData[] {
   return data.map((row: any) => ({
     address: row.address,
     transaction_from: row.transaction_from,
@@ -61,27 +70,15 @@ function transformResponse(data: any[], config: SyncConfig): TransferEventData[]
 }
 
 export const polygonBigQueryConfig: SyncConfig = {
-  cron: "*/30 * * * *",
+  cron: '*/30 * * * *',
   maxDurationInSeconds: 300,
-  chain: "polygon",
+  chain: 'polygon',
   provider: QueryProvider.BIGQUERY,
-  apiUrl: "", // Not used for BigQuery
+  apiUrl: '', // Not used for BigQuery
   paginationStrategy: PaginationStrategy.TIME_WINDOW,
   timeWindowInMs: 7 * 24 * 60 * 60 * 1000, // 1 week
   limit: 20_000,
-  facilitators: [
-    {
-        id: "x402rs",
-        enabled: false,
-        syncStartDate: new Date('2025-04-01'),
-        address: "0xd8dfc729cbd05381647eb5540d756f4f8ad63eec",
-        token: {
-          address: USDC_POLYGON,
-          decimals: USDC_DECIMALS,
-          symbol: "USDC",
-        }
-    },
-  ],
+  facilitators: FACILITATORS.filter(f => f.chain === Chain.POLYGON),
   buildQuery,
   transformResponse,
 };

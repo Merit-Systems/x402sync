@@ -1,8 +1,13 @@
-import { SyncConfig, Facilitator, PaginationStrategy, QueryProvider } from "../types";
-import { fetchWithOffsetPagination, fetchBitquery } from "./bitquery/fetch";
-import { fetchBigQuery } from "./bigquery/fetch";
-import { logger } from "@trigger.dev/sdk";
-import { fetchCDP } from "./cdp/fetch";
+import {
+  SyncConfig,
+  Facilitator,
+  PaginationStrategy,
+  QueryProvider,
+} from '../types';
+import { fetchWithOffsetPagination, fetchBitquery } from './bitquery/fetch';
+import { fetchBigQuery } from './bigquery/fetch';
+import { logger } from '@trigger.dev/sdk';
+import { fetchCDP } from './cdp/fetch';
 
 export async function fetchTransfers(
   config: SyncConfig,
@@ -37,35 +42,53 @@ async function fetchWithWindow(
   let totalFetched = 0;
 
   while (currentStart < now) {
-    const currentEnd = new Date(Math.min(currentStart.getTime() + timeWindowMs, now.getTime()));
-    
-    logger.log(`[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`);
+    const currentEnd = new Date(
+      Math.min(currentStart.getTime() + timeWindowMs, now.getTime())
+    );
+
+    logger.log(
+      `[${config.chain}] Fetching window: ${currentStart.toISOString()} to ${currentEnd.toISOString()}`
+    );
 
     let results: any[] | undefined;
 
     if (provider === QueryProvider.BIGQUERY) {
-      results = await fetchBigQuery(config, facilitator, currentStart, currentEnd);
+      results = await fetchBigQuery(
+        config,
+        facilitator,
+        currentStart,
+        currentEnd
+      );
     }
     if (provider === QueryProvider.BITQUERY) {
-      results = await fetchBitquery(config, facilitator, currentStart, currentEnd);
+      results = await fetchBitquery(
+        config,
+        facilitator,
+        currentStart,
+        currentEnd
+      );
     }
     if (provider === QueryProvider.CDP) {
       results = await fetchCDP(config, facilitator, currentStart, currentEnd);
-    } 
+    }
 
     if (!results) {
       throw new Error(`Unsupported provider: ${provider}`);
     }
 
     totalFetched += results.length;
-    logger.log(`[${config.chain}] Fetched ${results.length} results in this time window`);
+    logger.log(
+      `[${config.chain}] Fetched ${results.length} results in this time window`
+    );
 
     if (onBatchFetched && results.length > 0) {
       await onBatchFetched(results);
     }
 
     if (results.length >= config.limit) {
-      logger.warn(`[${config.chain}] Window hit limit of ${config.limit}. Some data might be missing.`);
+      logger.warn(
+        `[${config.chain}] Window hit limit of ${config.limit}. Some data might be missing.`
+      );
     }
 
     currentStart = currentEnd;
@@ -82,14 +105,21 @@ async function fetchWithOffset(
   onBatchFetched?: (batch: any[]) => Promise<void>
 ): Promise<{ totalFetched: number }> {
   if (config.provider !== QueryProvider.BITQUERY) {
-    throw new Error(`Offset pagination only supported for Bitquery, not ${config.provider}`);
+    throw new Error(
+      `Offset pagination only supported for Bitquery, not ${config.provider}`
+    );
   }
-  
-  const results = await fetchWithOffsetPagination(config, facilitator, since, now);
-  
+
+  const results = await fetchWithOffsetPagination(
+    config,
+    facilitator,
+    since,
+    now
+  );
+
   if (onBatchFetched && results.length > 0) {
     await onBatchFetched(results);
   }
-  
+
   return { totalFetched: results.length };
 }

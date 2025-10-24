@@ -1,5 +1,5 @@
-import { logger } from "@trigger.dev/sdk/v3";
-import { SyncConfig, Facilitator, QueryConfig } from "../../types";
+import { logger } from '@trigger.dev/sdk/v3';
+import { SyncConfig, Facilitator } from '../../types';
 
 export async function fetchWithOffsetPagination(
   config: SyncConfig,
@@ -10,7 +10,7 @@ export async function fetchWithOffsetPagination(
   const allTransfers = [];
   let offset = 0;
   let hasMore = true;
-  
+
   while (hasMore) {
     logger.log(`[${config.chain}] Fetching with offset: ${offset}`);
 
@@ -24,9 +24,8 @@ export async function fetchWithOffsetPagination(
     } else {
       offset += config.limit;
     }
-
   }
-  
+
   return allTransfers;
 }
 
@@ -36,8 +35,10 @@ export async function fetchBitquery(
   since: Date,
   now: Date
 ): Promise<any[]> {
-  logger.log(`[${config.chain}] Fetching Bitquery data from ${since.toISOString()} to ${now.toISOString()}`);
-  
+  logger.log(
+    `[${config.chain}] Fetching Bitquery data from ${since.toISOString()} to ${now.toISOString()}`
+  );
+
   const query = config.buildQuery(config, facilitator, since, now);
   return executeBitqueryRequest(config, facilitator, query);
 }
@@ -48,13 +49,13 @@ async function executeBitqueryRequest(
   query: string
 ): Promise<any[]> {
   const headers = new Headers();
-  headers.append("Content-Type", "application/json");
-  headers.append("Authorization", `Bearer ${process.env.BITQUERY_API_KEY}`);
+  headers.append('Content-Type', 'application/json');
+  headers.append('Authorization', `Bearer ${process.env.BITQUERY_API_KEY}`);
 
   const rawQuery = JSON.stringify({ query });
 
   const requestOptions = {
-    method: "POST",
+    method: 'POST',
     headers: headers,
     body: rawQuery,
   };
@@ -63,15 +64,21 @@ async function executeBitqueryRequest(
 
   if (!response.ok) {
     const errorText = await response.text();
-    logger.error(`[${config.chain}] Bitquery API error (${response.status}):`, { error: errorText });
+    logger.error(`[${config.chain}] Bitquery API error (${response.status}):`, {
+      error: errorText,
+    });
     throw new Error(`Bitquery API returned ${response.status}: ${errorText}`);
   }
 
   const result = await response.json();
 
   if (result.errors) {
-    logger.error(`[${config.chain}] Bitquery GraphQL errors:`, { errors: result.errors });
-    throw new Error(`Bitquery GraphQL errors: ${JSON.stringify(result.errors)}`);
+    logger.error(`[${config.chain}] Bitquery GraphQL errors:`, {
+      errors: result.errors,
+    });
+    throw new Error(
+      `Bitquery GraphQL errors: ${JSON.stringify(result.errors)}`
+    );
   }
 
   return config.transformResponse(result.data, config, facilitator);

@@ -1,4 +1,6 @@
-import { createChainSyncTask } from "../../../../sync";
-import { polygonBigQueryConfig } from "./config";
+import { createChainSyncTask } from '../../../../sync';
+import { polygonBigQueryConfig } from './config';
 
-export const polygonBigQuerySyncTransfers = createChainSyncTask(polygonBigQueryConfig);
+export const polygonBigQuerySyncTransfers = createChainSyncTask(
+  polygonBigQueryConfig
+);

@@ -1,5 +1,13 @@
-import { USDC_MULTIPLIER, USDC_SOLANA_TOKEN } from "@/trigger/constants";
-import { SyncConfig, Facilitator, PaginationStrategy, QueryConfig, QueryProvider, TransferEventData } from "../../../types";
+import { USDC_MULTIPLIER } from '@/trigger/constants';
+import {
+  SyncConfig,
+  Facilitator,
+  PaginationStrategy,
+  QueryProvider,
+  TransferEventData,
+  Chain,
+} from '../../../types';
+import { FACILITATORS } from '@/trigger/config';
 
 function buildQuery(
   config: SyncConfig,
@@ -65,23 +73,14 @@ function transformResponse(data: any, config: SyncConfig): TransferEventData[] {
 }
 
 export const solanaChainConfig: SyncConfig = {
-  cron: "*/30 * * * *",
+  cron: '*/30 * * * *',
   maxDurationInSeconds: 300,
-  chain: "solana",
+  chain: 'solana',
   provider: QueryProvider.BITQUERY,
-  apiUrl: "https://graphql.bitquery.io",
+  apiUrl: 'https://graphql.bitquery.io',
   paginationStrategy: PaginationStrategy.OFFSET,
   limit: 20_000,
-  facilitators: [
-    {
-        id: "payAI",
-        syncStartDate: new Date('2025-04-01'),
-        enabled: false,
-        address: "2wKupLR9q6wXYppw8Gr2NvWxKBUqm4PPJKkQfoxHDBg4",
-        token: USDC_SOLANA_TOKEN,
-    }
-  ],
+  facilitators: FACILITATORS.filter(f => f.chain === Chain.SOLANA),
   buildQuery,
   transformResponse,
 };
-

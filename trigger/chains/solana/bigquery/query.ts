@@ -1,16 +1,16 @@
-import { SyncConfig, Facilitator, TransferEventData } from "@/trigger/types";
-import { USDC_MULTIPLIER, USDC_SOLANA } from "@/trigger/constants";
-import { getAccount } from "@solana/spl-token";
-import { Connection, PublicKey } from "@solana/web3.js";
-import Bottleneck from "bottleneck";
+import { SyncConfig, Facilitator, TransferEventData } from '@/trigger/types';
+import { USDC_MULTIPLIER, USDC_SOLANA } from '@/trigger/constants';
+import { getAccount } from '@solana/spl-token';
+import { Connection, PublicKey } from '@solana/web3.js';
+import Bottleneck from 'bottleneck';
 
 export function buildQuery(
   config: SyncConfig,
   facilitator: Facilitator,
   since: Date,
-  now: Date,
+  now: Date
 ): string {
-    return `
+  return `
         DECLARE signer_pubkeys ARRAY<STRING> DEFAULT [
         "${facilitator.address}"
         ];
@@ -77,9 +77,15 @@ export function buildQuery(
  * Has to be replaces asap but we wanted to shipy shipy.
  * Great Tech.
  */
-export async function transformResponse(data: any[], config: SyncConfig, facilitator: Facilitator): Promise<TransferEventData[]> {
-  const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com');
-  
+export async function transformResponse(
+  data: any[],
+  config: SyncConfig,
+  facilitator: Facilitator
+): Promise<TransferEventData[]> {
+  const connection = new Connection(
+    process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com'
+  );
+
   const ownerCache = new Map<string, string>();
 
   const limiter = new Bottleneck({
@@ -87,14 +93,18 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
     reservoirRefreshAmount: 2,
     reservoirRefreshInterval: 1000,
     minTime: 500,
-    maxConcurrent: 1
+    maxConcurrent: 1,
   });
 
   const results = await Promise.all(
-    data.map((row: any) => 
+    data.map((row: any) =>
       limiter.schedule(async () => {
         const senderOwner = await getOwner(row.sender, connection, ownerCache);
-        const recipientOwner = await getOwner(row.recipient, connection, ownerCache);
+        const recipientOwner = await getOwner(
+          row.recipient,
+          connection,
+          ownerCache
+        );
 
         return {
           address: row.address,
@@ -117,14 +127,18 @@ export async function transformResponse(data: any[], config: SyncConfig, facilit
   return results;
 }
 
-async function getOwner(address: string, connection: Connection, cache: Map<string, string>): Promise<string> {
-    const addressTokenAccount = new PublicKey(address);
-    const key = addressTokenAccount.toBase58();
-    if (cache.has(key)) {
-        return cache.get(key)!;
-    }
-    const accountInfo = await getAccount(connection, addressTokenAccount);
-    const owner = accountInfo.owner.toBase58();
-    cache.set(key, owner);
-    return owner;
+async function getOwner(
+  address: string,
+  connection: Connection,
+  cache: Map<string, string>
+): Promise<string> {
+  const addressTokenAccount = new PublicKey(address);
+  const key = addressTokenAccount.toBase58();
+  if (cache.has(key)) {
+    return cache.get(key)!;
+  }
+  const accountInfo = await getAccount(connection, addressTokenAccount);
+  const owner = accountInfo.owner.toBase58();
+  cache.set(key, owner);
+  return owner;
 }
