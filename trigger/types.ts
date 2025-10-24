@@ -126,3 +126,24 @@ export interface BitQueryTransferRow {
   currency: { address: string };
   transaction: { feePayer: string; signature: string };
 }
+
+export interface BitQueryTransferRowStream {
+  Transfer: {
+    Amount: string;
+    Sender: string;
+    Receiver: string;
+    Currency: {
+      Name: string;
+      SmartContract: string;
+      Symbol: string;
+    };
+  };
+  Block: {
+    Time: string;
+    Number: number;
+  };
+  Transaction: {
+    Hash: string;
+    From: string;
+  };
+}

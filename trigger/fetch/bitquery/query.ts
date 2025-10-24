@@ -6,6 +6,7 @@ import {
   PaginationStrategy,
   QueryProvider,
   TransferEventData,
+  BitQueryTransferRowStream,
 } from '@/trigger/types';
 
 export function buildQuery(
@@ -55,10 +56,11 @@ export function buildQuery(
 }
 
 export function transformResponse(
-  data: any,
-  config: SyncConfig
+  data: unknown,
+  config: SyncConfig,
+  facilitator: Facilitator
 ): TransferEventData[] {
-  return data.EVM.Transfers.map((item: any) => ({
+  return (data as BitQueryTransferRowStream[]).map(item => ({
     address: item.Transfer.Currency?.SmartContract || DEFAULT_CONTRACT_ADDRESS,
     transaction_from: item.Transaction.From,
     sender: item.Transfer.Sender,
@@ -68,6 +70,8 @@ export function transformResponse(
     tx_hash: item.Transaction.Hash,
     chain: config.chain,
     provider: config.provider,
+    decimals: facilitator.token.decimals,
+    facilitator_id: facilitator.id,
   }));
 }
 
