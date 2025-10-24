@@ -77,6 +77,14 @@ const _FACILITATORS = validateUniqueFacilitators([
     chain: Chain.SOLANA,
   },
   {
+    id: 'x402rs-base-2',
+    syncStartDate: new Date('2025-10-20'),
+    enabled: true,
+    address: '0x97D38AA5dE015245DCCa76305b53ABE6DA25F6a5',
+    token: USDC_BASE_TOKEN,
+    chain: Chain.BASE,
+  },
+  {
     id: 'daydreams',
     syncStartDate: new Date('2025-10-25'),
     enabled: true,

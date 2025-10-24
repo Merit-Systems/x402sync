@@ -12,11 +12,6 @@ export function buildQuery(
   since: Date,
   now: Date
 ): string {
-  // Format dates for CDP SQL: YYYY-MM-DD HH:MM:SS.mmm
-  const formatDateForSql = (date: Date) => {
-    return date.toISOString().replace('T', ' ').replace('Z', '');
-  };
-
   return `
     SELECT
       address AS contract_address,
@@ -57,4 +52,8 @@ export function transformResponse(
     decimals: facilitator.token.decimals,
     facilitator_id: facilitator.id,
   }));
+}
+
+function formatDateForSql(date: Date): string {
+  return date.toISOString().replace('T', ' ').replace('Z', '');
 }
