@@ -86,7 +86,7 @@ const _FACILITATORS = validateUniqueFacilitators([
   },
   {
     id: 'daydreams',
-    syncStartDate: new Date('2025-10-24'),
+    syncStartDate: new Date('2025-10-20'),
     enabled: true,
     address: '0x279e08f711182c79Ba6d09669127a426228a4653',
     token: USDC_BASE_TOKEN,
