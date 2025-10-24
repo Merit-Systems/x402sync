@@ -76,6 +76,14 @@ const _FACILITATORS = validateUniqueFacilitators([
     token: USDC_SOLANA_TOKEN,
     chain: Chain.SOLANA,
   },
+  {
+    id: 'daydreams',
+    syncStartDate: new Date('2025-9-21'),
+    enabled: true,
+    address: '0xb308ed39d67D0d4BAe5BC2FAEF60c66BBb6AE429',
+    token: USDC_BASE_TOKEN,
+    chain: Chain.BASE,
+  },
 ] as const);
 
 export const FACILITATORS: Facilitator[] =
