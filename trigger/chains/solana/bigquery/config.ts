@@ -9,7 +9,7 @@ import { ONE_DAY_IN_MS, ONE_MINUTE_IN_SECONDS } from '@/trigger/constants';
 import { FACILITATORS } from '@/trigger/config';
 
 export const solanaBigQueryConfig: SyncConfig = {
-  cron: '0 0 * * *',
+  cron: '0 * * * *',
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: 'solana',
   provider: QueryProvider.BIGQUERY,

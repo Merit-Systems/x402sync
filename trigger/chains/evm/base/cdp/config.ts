@@ -9,7 +9,7 @@ import { buildQuery, transformResponse } from './query';
 import { FACILITATORS } from '@/trigger/config';
 
 export const baseCdpConfig: SyncConfig = {
-  cron: '0 0 * * *',
+  cron: '* * * * *',
   maxDurationInSeconds: ONE_MINUTE_IN_SECONDS * 10,
   chain: 'base',
   provider: QueryProvider.CDP,
